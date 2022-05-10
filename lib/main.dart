@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:pomoduo/pages/duo_page.dart';
 import 'package:pomoduo/pages/settings_page.dart';
-import 'package:pomoduo/pages/solo_page.dart';
+import 'package:pomoduo/pages/timer_page.dart';
 import 'package:pomoduo/pages/statistics_page.dart';
 import 'package:pomoduo/utils/constants.dart';
 
@@ -18,7 +18,7 @@ class Pomoduo extends StatelessWidget {
     return MaterialApp(
       theme: ThemeData(
         brightness: Brightness.dark,
-        primarySwatch: Colors.purple,
+        primarySwatch: Colors.deepPurple,
         visualDensity: VisualDensity.adaptivePlatformDensity,
         fontFamily: 'Quicksand-Variable',
       ),
@@ -37,12 +37,8 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   int _selectedIndex = 0;
-  static const List<Widget> _tabList = <Widget>[
-    SoloPage(),
-    DuoPage(),
-    StatisticsPage(),
-    SettingsPage()
-  ];
+
+  List<Widget> _tabList = <Widget>[TimerPage(), DuoPage(), StatisticsPage(), SettingsPage()];
 
   void _changeTab(int index) {
     setState(() {
@@ -64,8 +60,8 @@ class _MainPageState extends State<MainPage> {
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-              icon: Icon(Icons.person),
-              label: "Solo",
+              icon: Icon(Icons.watch_later),
+              label: "Timer",
               backgroundColor: PomoduoColor.backgroundColor),
           BottomNavigationBarItem(
               icon: Icon(Icons.people),
