@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -7,7 +8,9 @@ import 'package:pomoduo/pages/timer_page.dart';
 import 'package:pomoduo/pages/statistics_page.dart';
 import 'package:pomoduo/utils/constants.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
     systemNavigationBarColor: PomoduoColor.backgroundColor,
     statusBarColor: PomoduoColor.backgroundColor,
@@ -43,7 +46,12 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
   int _selectedIndex = 0;
 
-  List<Widget> _tabList = <Widget>[TimerPage(), DuoPage(), StatisticsPage(), SettingsPage()];
+  List<Widget> _tabList = <Widget>[
+    TimerPage(),
+    DuoPage(),
+    StatisticsPage(),
+    SettingsPage()
+  ];
 
   void _changeTab(int index) {
     setState(() {

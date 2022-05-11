@@ -44,7 +44,9 @@ class _DuoPageState extends State<DuoPage> {
 
   void _joinRoom() async {
     final roomId = await _openRoomDialog();
-
+    var room = await joinRoom(roomId.toString());
+    // room.then((value) => print(value.toMap()));
+    print(room.toMap());
 // Check if room id is valid
 
 // if valid, change to timer
