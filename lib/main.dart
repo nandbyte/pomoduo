@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import 'package:pomoduo/pages/duo_page.dart';
 import 'package:pomoduo/pages/settings_page.dart';
@@ -28,7 +29,9 @@ class Pomoduo extends StatelessWidget {
         brightness: Brightness.dark,
         primarySwatch: Colors.deepPurple,
         visualDensity: VisualDensity.adaptivePlatformDensity,
-        fontFamily: 'Quicksand-Variable',
+        textTheme: GoogleFonts.montserratTextTheme(
+          Theme.of(context).textTheme,
+        ).apply(bodyColor: Colors.white, displayColor: Colors.white),
       ),
       debugShowCheckedModeBanner: false,
       home: const MainPage(),
@@ -46,12 +49,7 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
   int _selectedIndex = 0;
 
-  List<Widget> _tabList = <Widget>[
-    TimerPage(),
-    DuoPage(),
-    StatisticsPage(),
-    SettingsPage()
-  ];
+  List<Widget> _tabList = <Widget>[TimerPage(), DuoPage(), StatisticsPage(), SettingsPage()];
 
   void _changeTab(int index) {
     setState(() {

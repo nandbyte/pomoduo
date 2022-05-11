@@ -16,6 +16,7 @@ dependencies:
     cloud_firestore: ^2.5.1
     intl: ^0.17.0
     custom_radio_grouped_button: ^2.1.2
+    google_fonts: ^2.3.2
 
 
 dev_dependencies:
