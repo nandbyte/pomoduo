@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pomoduo/models/room.dart';
 import 'package:pomoduo/utils/constants.dart';
 
 class DuoPage extends StatefulWidget {
@@ -25,6 +26,20 @@ class _DuoPageState extends State<DuoPage> {
 
   void _createRoom() async {
     final roomId = await _createRoomDialog();
+    DateTime date = new DateTime.now().toLocal();
+
+    Room room = new Room(
+        roomName: roomId.toString(),
+        numberOfUsers: 0,
+        users: [],
+        starstAt: date,
+        status: false,
+        focusDuration: 60,
+        shortBreakDuration: 10,
+        longBreakDuration: 25);
+
+    bool res = await room.createRoom();
+    print(res);
   }
 
   void _joinRoom() async {
@@ -98,9 +113,9 @@ class _DuoPageState extends State<DuoPage> {
                 foregroundColor:
                     MaterialStateProperty.all<Color>(Colors.white60),
               ),
-              onPressed: _createRoom,
+              onPressed: _enterRoomId,
               child: const Text(
-                "Join",
+                "Create",
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
             ),
