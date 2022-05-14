@@ -76,10 +76,8 @@ class _DuoPageState extends State<DuoPage> {
           actions: [
             ElevatedButton(
               style: ButtonStyle(
-                backgroundColor:
-                    MaterialStateProperty.all<Color>(PomoduoColor.themeColor),
-                foregroundColor:
-                    MaterialStateProperty.all<Color>(Colors.white60),
+                backgroundColor: MaterialStateProperty.all<Color>(PomoduoColor.themeColor),
+                foregroundColor: MaterialStateProperty.all<Color>(Colors.white60),
               ),
               onPressed: _enterRoomId,
               child: const Text(
@@ -110,10 +108,8 @@ class _DuoPageState extends State<DuoPage> {
           actions: [
             ElevatedButton(
               style: ButtonStyle(
-                backgroundColor:
-                    MaterialStateProperty.all<Color>(PomoduoColor.themeColor),
-                foregroundColor:
-                    MaterialStateProperty.all<Color>(Colors.white60),
+                backgroundColor: MaterialStateProperty.all<Color>(PomoduoColor.themeColor),
+                foregroundColor: MaterialStateProperty.all<Color>(Colors.white60),
               ),
               onPressed: _enterRoomId,
               child: const Text(
@@ -130,29 +126,34 @@ class _DuoPageState extends State<DuoPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        const Text("Duo Mode"),
+        const Center(child: Text("Duo Mode")),
+        const SizedBox(
+          height: 36,
+        ),
+        const Center(
+          child: Text("Room joined: -", style: TextStyle(color: Colors.white70)),
+        ),
+        const SizedBox(
+          height: 16,
+        ),
         ElevatedButton(
           style: ButtonStyle(
-            backgroundColor:
-                MaterialStateProperty.all<Color>(PomoduoColor.themeColor),
-            foregroundColor: MaterialStateProperty.all<Color>(Colors.white60),
+            backgroundColor: MaterialStateProperty.all<Color>(PomoduoColor.themeColor),
+            foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
           ),
           onPressed: _createRoom,
           child: const Text(
             "Create Room",
-            style: TextStyle(fontWeight: FontWeight.bold),
           ),
         ),
         ElevatedButton(
           style: ButtonStyle(
-            backgroundColor:
-                MaterialStateProperty.all<Color>(PomoduoColor.themeColor),
-            foregroundColor: MaterialStateProperty.all<Color>(Colors.white60),
+            backgroundColor: MaterialStateProperty.all<Color>(PomoduoColor.themeColor),
+            foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
           ),
           onPressed: _joinRoom,
           child: const Text(
             "Join Room",
-            style: TextStyle(fontWeight: FontWeight.bold),
           ),
         )
       ],
