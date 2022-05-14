@@ -35,6 +35,7 @@ class RoomProvider extends ChangeNotifier {
     };
   }
 
+// TODO: Update this function to match state function style
   Future<bool> createRoom() async {
     CollectionReference db = FirebaseFirestore.instance.collection("rooms");
     var roomsWithSameName = await db.where("roomName", isEqualTo: roomName).get();
@@ -43,6 +44,7 @@ class RoomProvider extends ChangeNotifier {
     } else {
       await db.add(toMap());
     }
+    notifyListeners();
     return true;
   }
 
@@ -75,9 +77,11 @@ class RoomProvider extends ChangeNotifier {
         }
       }
     });
+    notifyListeners();
   }
 
   void showError(String error) {
     _roomError = error;
+    notifyListeners();
   }
 }

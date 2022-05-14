@@ -7,7 +7,10 @@ import 'package:pomoduo/pages/duo_page.dart';
 import 'package:pomoduo/pages/settings_page.dart';
 import 'package:pomoduo/pages/timer_page.dart';
 import 'package:pomoduo/pages/statistics_page.dart';
+import 'package:pomoduo/providers/room_provider.dart';
+import 'package:pomoduo/providers/timer_provider.dart';
 import 'package:pomoduo/utils/constants.dart';
+import 'package:provider/provider.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,7 +19,10 @@ Future<void> main() async {
     systemNavigationBarColor: PomoduoColor.backgroundColor,
     statusBarColor: PomoduoColor.backgroundColor,
   ));
-  runApp(const Pomoduo());
+  runApp(MultiProvider(providers: [
+    ChangeNotifierProvider(create: (_) => TimerProvider()),
+    ChangeNotifierProvider(create: (_) => RoomProvider())
+  ], child: const Pomoduo()));
 }
 
 class Pomoduo extends StatelessWidget {

@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 
-class Timer with ChangeNotifier {
+class TimerProvider with ChangeNotifier {
   int _focusDuration = 25;
   int _shortBreakDuration = 5;
   int _longBreakDuration = 15;
@@ -13,13 +13,16 @@ class Timer with ChangeNotifier {
 
   void changeFocusDuration(int newDuration) {
     _focusDuration = newDuration;
+    notifyListeners();
   }
 
   void changeShortBreakDuration(int newDuration) {
     _shortBreakDuration = newDuration;
+    notifyListeners();
   }
 
   void chnageLongBreakDuration(int newDuration) {
     _longBreakDuration = newDuration;
+    notifyListeners();
   }
 }
