@@ -1,9 +1,9 @@
 import 'package:flutter/foundation.dart';
 
 class TimerProvider with ChangeNotifier {
-  int _focusDuration = 25;
-  int _shortBreakDuration = 5;
-  int _longBreakDuration = 15;
+  int _focusDuration = 25 * 60;
+  int _shortBreakDuration = 5 * 60;
+  int _longBreakDuration = 15 * 60;
   bool _isRunning = false;
 
   int get focusDuration => _focusDuration;

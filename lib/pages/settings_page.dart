@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:pomoduo/providers/timer_provider.dart';
 import 'package:pomoduo/utils/constants.dart';
 import 'package:custom_radio_grouped_button/custom_radio_grouped_button.dart';
 
@@ -52,8 +54,12 @@ class _FocusTimeSettingsState extends State<FocusTimeSettings> {
         enableShape: true,
         enableButtonWrap: true,
         buttonLables: const ["20 m", "25 m", "30 m", "35 m", "40 m", "45 m"],
-        buttonValues: const ["20", "25", "30", "35", "40", "45"],
+        buttonValues: const [20, 25, 30, 35, 40, 45],
+        defaultSelected: context.watch<TimerProvider>().focusDuration / 60,
         radioButtonValue: (value) {
+          context
+              .read<TimerProvider>()
+              .changeFocusDuration(int.parse(value.toString()) * 60);
           print(value);
         },
       ),
@@ -69,6 +75,10 @@ class ShortBreakTimeSettings extends StatefulWidget {
 }
 
 class _ShortBreakTimeSettingsState extends State<ShortBreakTimeSettings> {
+  // void updateShortBreak(int val, BuildContext context) {
+  //   context.read<TimerProvider>().
+  // }
+
   @override
   Widget build(BuildContext context) {
     return Column(children: <Widget>[
@@ -88,8 +98,12 @@ class _ShortBreakTimeSettingsState extends State<ShortBreakTimeSettings> {
         enableShape: true,
         enableButtonWrap: true,
         buttonLables: const ["5 m", "10 m", "15 m"],
-        buttonValues: const ["5", "10", "15"],
+        buttonValues: const [5, 10, 15],
+        defaultSelected: context.watch<TimerProvider>().shortBreakDuration / 60,
         radioButtonValue: (value) {
+          context
+              .read<TimerProvider>()
+              .changeShortBreakDuration(int.parse(value.toString()) * 60);
           print(value);
         },
       ),
@@ -124,8 +138,12 @@ class _LongBreakTimeSettingsState extends State<LongBreakTimeSettings> {
         enableShape: true,
         enableButtonWrap: true,
         buttonLables: const ["15 m", "20 m", "25 m"],
-        buttonValues: const ["15", "20", "25"],
+        buttonValues: const [15, 20, 25],
+        defaultSelected: context.watch<TimerProvider>().longBreakDuration / 60,
         radioButtonValue: (value) {
+          context
+              .read<TimerProvider>()
+              .chnageLongBreakDuration(int.parse(value.toString()) * 60);
           print(value);
         },
       ),
@@ -159,7 +177,8 @@ class _AccountSettingsState extends State<AccountSettings> {
           padding: const EdgeInsets.fromLTRB(0, 12, 0, 16.0),
           child: ElevatedButton(
             style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all<Color>(PomoduoColor.themeColor),
+              backgroundColor:
+                  MaterialStateProperty.all<Color>(PomoduoColor.themeColor),
               foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
             ),
             onPressed: () {},

@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'dart:ui';
+import 'package:pomoduo/providers/timer_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:pomoduo/utils/constants.dart';
@@ -19,9 +21,27 @@ class _TimerPageState extends State<TimerPage> {
   bool _isTimerRunning = false;
 
 // TODO: Swap with global state variables
-  int focusDuration = 1 * 60;
-  int shortBreakDuration = 5 * 60;
-  int longBreakDuraiton = 15 * 60;
+  int focusDuration = 0;
+  int shortBreakDuration = 0;
+  int longBreakDuraiton = 0;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    focusDuration = context.read<TimerProvider>().focusDuration;
+    shortBreakDuration = context.read<TimerProvider>().shortBreakDuration;
+    longBreakDuraiton = context.read<TimerProvider>().longBreakDuration;
+    // shortBreakDuration = 5 * 60;
+    print("Daddy loaded");
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+
+    super.dispose();
+  }
 
   void _toggleTimer() {
     // Stop if running
@@ -44,7 +64,7 @@ class _TimerPageState extends State<TimerPage> {
 
     setState(() {
       _remainingTime = focusDuration - timeDifference.inSeconds;
-      _currentTimerValue = "25:00";
+      // _currentTimerValue = "25:00";
       _isTimerRunning = true;
       _timerPercentage = 1;
     });

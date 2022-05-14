@@ -28,7 +28,7 @@ class _DuoPageState extends State<DuoPage> {
     final roomId = await _createRoomDialog();
     DateTime date = new DateTime.now().toLocal();
 
-    Room room = new Room(
+    Room room = Room(
         roomName: roomId.toString(),
         numberOfUsers: 0,
         users: [],
@@ -76,8 +76,10 @@ class _DuoPageState extends State<DuoPage> {
           actions: [
             ElevatedButton(
               style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all<Color>(PomoduoColor.themeColor),
-                foregroundColor: MaterialStateProperty.all<Color>(Colors.white60),
+                backgroundColor:
+                    MaterialStateProperty.all<Color>(PomoduoColor.themeColor),
+                foregroundColor:
+                    MaterialStateProperty.all<Color>(Colors.white60),
               ),
               onPressed: _enterRoomId,
               child: const Text(
@@ -108,8 +110,10 @@ class _DuoPageState extends State<DuoPage> {
           actions: [
             ElevatedButton(
               style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all<Color>(PomoduoColor.themeColor),
-                foregroundColor: MaterialStateProperty.all<Color>(Colors.white60),
+                backgroundColor:
+                    MaterialStateProperty.all<Color>(PomoduoColor.themeColor),
+                foregroundColor:
+                    MaterialStateProperty.all<Color>(Colors.white60),
               ),
               onPressed: _enterRoomId,
               child: const Text(
@@ -131,14 +135,16 @@ class _DuoPageState extends State<DuoPage> {
           height: 36,
         ),
         const Center(
-          child: Text("Room joined: -", style: TextStyle(color: Colors.white70)),
+          child:
+              Text("Room joined: -", style: TextStyle(color: Colors.white70)),
         ),
         const SizedBox(
           height: 16,
         ),
         ElevatedButton(
           style: ButtonStyle(
-            backgroundColor: MaterialStateProperty.all<Color>(PomoduoColor.themeColor),
+            backgroundColor:
+                MaterialStateProperty.all<Color>(PomoduoColor.themeColor),
             foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
           ),
           onPressed: _createRoom,
@@ -148,7 +154,8 @@ class _DuoPageState extends State<DuoPage> {
         ),
         ElevatedButton(
           style: ButtonStyle(
-            backgroundColor: MaterialStateProperty.all<Color>(PomoduoColor.themeColor),
+            backgroundColor:
+                MaterialStateProperty.all<Color>(PomoduoColor.themeColor),
             foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
           ),
           onPressed: _joinRoom,

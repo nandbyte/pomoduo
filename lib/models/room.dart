@@ -49,7 +49,7 @@ class Room {
 }
 
 Future<Room> joinRoom(String _roomName) async {
-  Room room = new Room(
+  Room room = Room(
       roomName: '-1',
       numberOfUsers: 0,
       users: [],
