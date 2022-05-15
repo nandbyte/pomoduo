@@ -60,7 +60,12 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
   int _selectedIndex = 0;
 
-  List<Widget> _tabList = <Widget>[TimerPage(), DuoPage(), StatisticsPage(), SettingsPage()];
+  final List<Widget> _tabList = const <Widget>[
+    TimerPage(),
+    DuoPage(),
+    StatisticsPage(),
+    SettingsPage()
+  ];
 
   void _changeTab(int index) {
     setState(() {
