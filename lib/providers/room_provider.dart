@@ -1,8 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class RoomProvider extends ChangeNotifier {
-  String _roomName = "";
+  String _roomName = "-";
   int _numberOfUsers = 1;
   List<String> _users = [];
   DateTime _startingTime = DateTime.now();
@@ -22,6 +23,18 @@ class RoomProvider extends ChangeNotifier {
   bool get isTimerRunning => _isTimerRunning;
   String get roomError => _roomError;
 
+  changeRoomName(String _name) {
+    _roomName = _name;
+    notifyListeners();
+  }
+
+  String getRoomName() {
+    if (_roomName != Null) {
+      return roomName;
+    }
+    return "-";
+  }
+
   Map<String, dynamic> toMap() {
     return {
       'roomName': _roomName,
@@ -38,7 +51,8 @@ class RoomProvider extends ChangeNotifier {
 // TODO: Update this function to match state function style
   Future<bool> createRoom() async {
     CollectionReference db = FirebaseFirestore.instance.collection("rooms");
-    var roomsWithSameName = await db.where("roomName", isEqualTo: roomName).get();
+    var roomsWithSameName =
+        await db.where("roomName", isEqualTo: roomName).get();
     if (roomsWithSameName.size > 0) {
       return false;
     } else {

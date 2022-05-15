@@ -42,6 +42,13 @@ class TimerProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  updateFromFetch(int newDuration, int newLongBreak, int newShortBrreakk) {
+    _focusDuration = Duration(seconds: newDuration);
+    _longBreakDuration = Duration(seconds: newLongBreak);
+    _shortBreakDuration = Duration(seconds: newShortBrreakk);
+    notifyListeners();
+  }
+
   toggleTimer() {
     if (!_isTimerRunning) {
       _startTimer();

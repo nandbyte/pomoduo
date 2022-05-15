@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:pomoduo/providers/room_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:pomoduo/models/room.dart';
 import 'package:pomoduo/providers/timer_provider.dart';
 import 'package:pomoduo/utils/constants.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class DuoPage extends StatefulWidget {
   const DuoPage({Key? key}) : super(key: key);
@@ -36,25 +38,44 @@ class _DuoPageState extends State<DuoPage> {
         users: [],
         starstAt: date,
         status: false,
-        focusDuration: context.watch<TimerProvider>().focusDuration,
-        shortBreakDuration: context.watch<TimerProvider>().shortBreakDuration,
-        longBreakDuration: context.watch<TimerProvider>().longBreakDuration);
+        focusDuration: context.read<TimerProvider>().focusDuration ~/ 60,
+        shortBreakDuration:
+            context.read<TimerProvider>().shortBreakDuration ~/ 60,
+        longBreakDuration:
+            context.read<TimerProvider>().longBreakDuration ~/ 60);
 
     bool res = await room.createRoom();
+    if (res) {
+      context.read<TimerProvider>().updateFromFetch(room.focusDuration * 60,
+          room.longBreakDuration * 60, room.shortBreakDuration * 60);
+      context.read<RoomProvider>().changeRoomName(room.roomName);
+    }
     print(res);
+  }
+
+  void _showToast(BuildContext context) {
+    final scaffold = ScaffoldMessenger.of(context);
+    scaffold.showSnackBar(
+      SnackBar(
+        content: const Text('Room Not found'),
+        action: SnackBarAction(
+            label: 'UNDO', onPressed: scaffold.hideCurrentSnackBar),
+      ),
+    );
   }
 
   void _joinRoom() async {
     final roomId = await _openRoomDialog();
     var room = await joinRoom(roomId.toString());
     // room.then((value) => print(value.toMap()));
-    context.read<TimerProvider>().changeFocusDuration(room.focusDuration * 60);
-    context
-        .read<TimerProvider>()
-        .changeLongBreakDuration(room.longBreakDuration * 60);
-    context
-        .read<TimerProvider>()
-        .changeShortBreakDuration(room.shortBreakDuration * 60);
+    if (room.roomName.toString() != '-1') {
+      context.read<TimerProvider>().updateFromFetch(room.focusDuration * 60,
+          room.longBreakDuration * 60, room.shortBreakDuration * 60);
+      context.read<RoomProvider>().changeRoomName(room.roomName);
+    } else {
+      context.read<RoomProvider>().changeRoomName("-");
+      _showToast(context);
+    }
 
     print(room.toMap());
 
@@ -145,9 +166,9 @@ class _DuoPageState extends State<DuoPage> {
         const SizedBox(
           height: 36,
         ),
-        const Center(
-          child:
-              Text("Room joined: -", style: TextStyle(color: Colors.white70)),
+        Center(
+          child: Text("Room joined: ${context.read<RoomProvider>().roomName}",
+              style: TextStyle(color: Colors.white70)),
         ),
         const SizedBox(
           height: 16,
