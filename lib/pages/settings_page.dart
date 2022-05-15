@@ -166,67 +166,74 @@ class _AccountSettingsState extends State<AccountSettings> {
               child: Text("Account"),
             ),
           ),
-          (() {
-            if (!context.read<GoogleSignInProvider>().isSignedIn) {
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  const Center(
-                    child: Text("Not logged in.", style: TextStyle(color: Colors.white70)),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 12, 0, 16.0),
-                    child: ElevatedButton.icon(
-                      style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all<Color>(PomoduoColor.themeColor),
-                        foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+          Consumer<GoogleSignInProvider>(
+            builder: (context, googleSignInProvider, widget) {
+              return (() {
+                if (!googleSignInProvider.isSignedIn) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      const Center(
+                        child: Text("Not logged in.", style: TextStyle(color: Colors.white70)),
                       ),
-                      icon: const Icon(Icons.g_mobiledata),
-                      onPressed: () => context.read<GoogleSignInProvider>().googleLogin(),
-                      label: const Text(
-                        "Login with Google",
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(0, 12, 0, 16.0),
+                        child: ElevatedButton.icon(
+                          style: ButtonStyle(
+                            backgroundColor:
+                                MaterialStateProperty.all<Color>(PomoduoColor.themeColor),
+                            foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+                          ),
+                          icon: const Icon(Icons.g_mobiledata),
+                          onPressed: () => googleSignInProvider.googleLogin(),
+                          label: const Text(
+                            "Login with Google",
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
-                ],
-              );
-            } else {
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  const CircleAvatar(
-                    backgroundColor: PomoduoColor.foregroundColor,
-                    backgroundImage:
-                        NetworkImage("https://avatars.githubusercontent.com/u/38876495?v=4"),
-                  ),
-                  const SizedBox(height: 12),
-                  const Center(
-                    child: Text("Arctronic Sikder", style: TextStyle(color: Colors.white)),
-                  ),
-                  const SizedBox(height: 8),
-                  const Center(
-                    child: Text("(arctronic@shihab.com)", style: TextStyle(color: Colors.white70)),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 12, 0, 16.0),
-                    child: ElevatedButton.icon(
-                      style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all<Color>(PomoduoColor.themeColor),
-                        foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+                    ],
+                  );
+                } else {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      const CircleAvatar(
+                        backgroundColor: PomoduoColor.foregroundColor,
+                        backgroundImage:
+                            NetworkImage("https://avatars.githubusercontent.com/u/38876495?v=4"),
                       ),
-                      icon: const Icon(Icons.logout),
-                      onPressed: () {
-                        context.read<GoogleSignInProvider>().googleLogin();
-                      },
-                      label: const Text(
-                        "Logout ",
+                      const SizedBox(height: 12),
+                      const Center(
+                        child: Text("Arctronic Sikder", style: TextStyle(color: Colors.white)),
                       ),
-                    ),
-                  ),
-                ],
-              );
-            }
-          }())
+                      const SizedBox(height: 8),
+                      const Center(
+                        child:
+                            Text("(arctronic@shihab.com)", style: TextStyle(color: Colors.white70)),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(0, 12, 0, 16.0),
+                        child: ElevatedButton.icon(
+                          style: ButtonStyle(
+                            backgroundColor:
+                                MaterialStateProperty.all<Color>(PomoduoColor.themeColor),
+                            foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+                          ),
+                          icon: const Icon(Icons.logout),
+                          onPressed: () {
+                            googleSignInProvider.googleLogout();
+                          },
+                          label: const Text(
+                            "Logout ",
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
+                }
+              }());
+            },
+          )
         ],
       ),
     );

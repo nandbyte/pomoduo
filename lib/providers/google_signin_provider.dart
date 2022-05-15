@@ -34,5 +34,6 @@ class GoogleSignInProvider extends ChangeNotifier {
 // TODO: implement this
   googleLogout() {
     _isSignedIn = false;
+    notifyListeners();
   }
 }
