@@ -32,8 +32,10 @@ class GoogleSignInProvider extends ChangeNotifier {
   }
 
 // TODO: implement this
-  googleLogout() {
-    _isSignedIn = false;
+  googleLogout() async {
+    await FirebaseAuth.instance.signOut().then((_) {
+      _isSignedIn = false;
+    });
     notifyListeners();
   }
 }
