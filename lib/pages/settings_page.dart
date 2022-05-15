@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pomoduo/models/user.dart';
 import 'package:pomoduo/providers/google_signin_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:pomoduo/providers/timer_provider.dart';
@@ -165,6 +166,24 @@ class AccountSettings extends StatefulWidget {
 }
 
 class _AccountSettingsState extends State<AccountSettings> {
+  Future<void> postLogin() async {
+    PomoduoUser user = PomoduoUser(
+        UID: context.read<GoogleSignInProvider>().user.id.toString(),
+        userName:
+            context.read<GoogleSignInProvider>().user.displayName.toString(),
+        docID: "",
+        currentRoom: "",
+        allDateOfJoin: [],
+        allRooms: []);
+    user.userSignInUpdateRecord();
+    Future.delayed(const Duration(milliseconds: 1000), () {
+      user.userSignInUpdateRecord();
+    });
+    context.read<GoogleSignInProvider>().changeDocumentId(user.docID);
+    print("User printing: ");
+    print(user.toMap());
+  }
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -198,7 +217,10 @@ class _AccountSettingsState extends State<AccountSettings> {
                                 MaterialStateProperty.all<Color>(Colors.white),
                           ),
                           icon: const Icon(Icons.g_mobiledata),
-                          onPressed: () => googleSignInProvider.googleLogin(),
+                          onPressed: () {
+                            googleSignInProvider.googleLogin();
+                            postLogin();
+                          },
                           label: const Text(
                             "Login with Google",
                           ),

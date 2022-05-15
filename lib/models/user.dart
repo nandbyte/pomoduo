@@ -1,16 +1,18 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class User {
+class PomoduoUser {
   String UID;
   String userName;
+  String docID;
   String currentRoom;
   List<String> allRooms;
   List<String> allDateOfJoin;
 
-  User(
+  PomoduoUser(
       {required this.UID,
       required this.userName,
       required this.currentRoom,
+      required this.docID,
       required this.allDateOfJoin,
       required this.allRooms});
 
@@ -18,15 +20,17 @@ class User {
     return {
       'UID': UID,
       'userName': userName,
+      'docID': docID,
       'currentRoom': currentRoom,
       'allRooms': allRooms,
       'allDateOfjoin': allDateOfJoin
     };
   }
 
-  Future<User> userSignInUpdateRecord() async {
-    User user = User(
+  Future<PomoduoUser> userSignInUpdateRecord() async {
+    PomoduoUser user = PomoduoUser(
         UID: UID,
+        docID: docID,
         userName: userName,
         currentRoom: currentRoom,
         allDateOfJoin: allDateOfJoin,
@@ -38,22 +42,30 @@ class User {
         .get()
         .then((value) {
       if (value.size == 0) {
-        user = User(
+        user = PomoduoUser(
             UID: UID,
             userName: userName,
+            docID: "",
             currentRoom: "",
             allDateOfJoin: [],
             allRooms: []);
-        FirebaseFirestore.instance.collection("users").add(user.toMap());
+        var obj = FirebaseFirestore.instance
+            .collection("users")
+            .add(user.toMap())
+            .then((value) {
+          docID = value.id;
+          value.update({"docID": value.id});
+        });
         return user;
       } else if (value.size > 0) {
         for (var data in value.docs) {
-          user = User(
+          user = PomoduoUser(
               UID: data.data()["UID"],
               userName: data.data()["userName"],
+              docID: data.data()["docID"].toString(),
               currentRoom: data.data()["currentRoom"],
-              allDateOfJoin: data.data()["allDateOfJoin"],
-              allRooms: data.data()["allRooms"]);
+              allDateOfJoin: data.data()["allDateOfJoin"]?.cast<String>() ?? [],
+              allRooms: data.data()["allRooms"]?.cast<String>() ?? []);
           return user;
         }
       }
@@ -61,4 +73,12 @@ class User {
 
     return user;
   }
+}
+
+Future<void> addJoinHistory(String roomName, String date, String id) async {
+  print("Requested doc ID $id");
+  await FirebaseFirestore.instance.collection("users").doc(id).update({
+    "allDateOfJoin": FieldValue.arrayUnion([date]),
+    "allRRooms": FieldValue.arrayUnion([roomName]),
+  });
 }
