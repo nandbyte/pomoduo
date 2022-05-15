@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pomoduo/providers/google_signin_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:pomoduo/providers/timer_provider.dart';
 import 'package:pomoduo/utils/constants.dart';
@@ -57,7 +58,9 @@ class _FocusTimeSettingsState extends State<FocusTimeSettings> {
         buttonValues: const [20, 25, 30, 35, 40, 45],
         defaultSelected: context.watch<TimerProvider>().focusDuration / 60,
         radioButtonValue: (value) {
-          context.read<TimerProvider>().changeFocusDuration(int.parse(value.toString()) * 60);
+          context
+              .read<TimerProvider>()
+              .changeFocusDuration(int.parse(value.toString()) * 60);
           print(value);
         },
       ),
@@ -99,7 +102,9 @@ class _ShortBreakTimeSettingsState extends State<ShortBreakTimeSettings> {
         buttonValues: const [5, 10, 15],
         defaultSelected: context.watch<TimerProvider>().shortBreakDuration / 60,
         radioButtonValue: (value) {
-          context.read<TimerProvider>().changeShortBreakDuration(int.parse(value.toString()) * 60);
+          context
+              .read<TimerProvider>()
+              .changeShortBreakDuration(int.parse(value.toString()) * 60);
           print(value);
         },
       ),
@@ -137,7 +142,9 @@ class _LongBreakTimeSettingsState extends State<LongBreakTimeSettings> {
         buttonValues: const [15, 20, 25],
         defaultSelected: context.watch<TimerProvider>().longBreakDuration / 60,
         radioButtonValue: (value) {
-          context.read<TimerProvider>().changeLongBreakDuration(int.parse(value.toString()) * 60);
+          context
+              .read<TimerProvider>()
+              .changeLongBreakDuration(int.parse(value.toString()) * 60);
           print(value);
         },
       ),
@@ -169,14 +176,18 @@ class _AccountSettingsState extends State<AccountSettings> {
         ),
         Padding(
           padding: const EdgeInsets.fromLTRB(0, 12, 0, 16.0),
-          child: ElevatedButton(
+          child: ElevatedButton.icon(
             style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all<Color>(PomoduoColor.themeColor),
+              backgroundColor:
+                  MaterialStateProperty.all<Color>(PomoduoColor.themeColor),
               foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
             ),
-            onPressed: () {},
-            child: const Text(
-              "Login",
+            icon: Icon(Icons.g_mobiledata),
+            onPressed: () {
+              context.read<GoogleSignInProvider>().googleLogin();
+            },
+            label: const Text(
+              " Login with Google",
             ),
           ),
         ),
