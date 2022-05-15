@@ -39,15 +39,13 @@ class _DuoPageState extends State<DuoPage> {
         starstAt: date,
         status: false,
         focusDuration: context.read<TimerProvider>().focusDuration ~/ 60,
-        shortBreakDuration:
-            context.read<TimerProvider>().shortBreakDuration ~/ 60,
-        longBreakDuration:
-            context.read<TimerProvider>().longBreakDuration ~/ 60);
+        shortBreakDuration: context.read<TimerProvider>().shortBreakDuration ~/ 60,
+        longBreakDuration: context.read<TimerProvider>().longBreakDuration ~/ 60);
 
     bool res = await room.createRoom();
     if (res) {
-      context.read<TimerProvider>().updateFromFetch(room.focusDuration * 60,
-          room.longBreakDuration * 60, room.shortBreakDuration * 60);
+      context.read<TimerProvider>().updateFromFetch(
+          room.focusDuration * 60, room.longBreakDuration * 60, room.shortBreakDuration * 60);
       context.read<RoomProvider>().changeRoomName(room.roomName);
     }
     print(res);
@@ -58,8 +56,7 @@ class _DuoPageState extends State<DuoPage> {
     scaffold.showSnackBar(
       SnackBar(
         content: const Text('Room Not found'),
-        action: SnackBarAction(
-            label: 'UNDO', onPressed: scaffold.hideCurrentSnackBar),
+        action: SnackBarAction(label: 'UNDO', onPressed: scaffold.hideCurrentSnackBar),
       ),
     );
   }
@@ -69,8 +66,8 @@ class _DuoPageState extends State<DuoPage> {
     var room = await joinRoom(roomId.toString());
     // room.then((value) => print(value.toMap()));
     if (room.roomName.toString() != '-1') {
-      context.read<TimerProvider>().updateFromFetch(room.focusDuration * 60,
-          room.longBreakDuration * 60, room.shortBreakDuration * 60);
+      context.read<TimerProvider>().updateFromFetch(
+          room.focusDuration * 60, room.longBreakDuration * 60, room.shortBreakDuration * 60);
       context.read<RoomProvider>().changeRoomName(room.roomName);
     } else {
       context.read<RoomProvider>().changeRoomName("-");
@@ -108,10 +105,8 @@ class _DuoPageState extends State<DuoPage> {
           actions: [
             ElevatedButton(
               style: ButtonStyle(
-                backgroundColor:
-                    MaterialStateProperty.all<Color>(PomoduoColor.themeColor),
-                foregroundColor:
-                    MaterialStateProperty.all<Color>(Colors.white60),
+                backgroundColor: MaterialStateProperty.all<Color>(PomoduoColor.themeColor),
+                foregroundColor: MaterialStateProperty.all<Color>(Colors.white60),
               ),
               onPressed: _enterRoomId,
               child: const Text(
@@ -142,10 +137,8 @@ class _DuoPageState extends State<DuoPage> {
           actions: [
             ElevatedButton(
               style: ButtonStyle(
-                backgroundColor:
-                    MaterialStateProperty.all<Color>(PomoduoColor.themeColor),
-                foregroundColor:
-                    MaterialStateProperty.all<Color>(Colors.white60),
+                backgroundColor: MaterialStateProperty.all<Color>(PomoduoColor.themeColor),
+                foregroundColor: MaterialStateProperty.all<Color>(Colors.white60),
               ),
               onPressed: _enterRoomId,
               child: const Text(
@@ -166,17 +159,15 @@ class _DuoPageState extends State<DuoPage> {
         const SizedBox(
           height: 36,
         ),
-        Center(
-          child: Text("Room joined: ${context.read<RoomProvider>().roomName}",
-              style: TextStyle(color: Colors.white70)),
+        const Center(
+          child: RoomName(),
         ),
         const SizedBox(
           height: 16,
         ),
         ElevatedButton(
           style: ButtonStyle(
-            backgroundColor:
-                MaterialStateProperty.all<Color>(PomoduoColor.themeColor),
+            backgroundColor: MaterialStateProperty.all<Color>(PomoduoColor.themeColor),
             foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
           ),
           onPressed: _createRoom,
@@ -186,8 +177,7 @@ class _DuoPageState extends State<DuoPage> {
         ),
         ElevatedButton(
           style: ButtonStyle(
-            backgroundColor:
-                MaterialStateProperty.all<Color>(PomoduoColor.themeColor),
+            backgroundColor: MaterialStateProperty.all<Color>(PomoduoColor.themeColor),
             foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
           ),
           onPressed: _joinRoom,
@@ -197,5 +187,19 @@ class _DuoPageState extends State<DuoPage> {
         )
       ],
     );
+  }
+}
+
+class RoomName extends StatelessWidget {
+  const RoomName({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<RoomProvider>(builder: (context, roomProvider, widget) {
+      return Text(
+        "Room joined: ${roomProvider.roomName}",
+        style: const TextStyle(color: Colors.white70),
+      );
+    });
   }
 }
