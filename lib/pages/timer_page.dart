@@ -80,7 +80,8 @@ class ArcTimer extends StatelessWidget {
         percent: timerProvider.remainingDuration.inSeconds /
             timerProvider.currentSessionDuration.inSeconds,
         circularStrokeCap: CircularStrokeCap.round,
-        progressColor: PomoduoColor.themeColor,
+        progressColor:
+            timerProvider.sessionCount % 2 == 0 ? PomoduoColor.focusColor : PomoduoColor.breakColor,
         arcType: ArcType.FULL,
         arcBackgroundColor: PomoduoColor.foregroundColor,
         center: Text(
@@ -116,9 +117,9 @@ class SessionProgressIndicator extends StatelessWidget {
                 containerIconData = Icons.check;
 
                 if (index % 2 == 0) {
-                  containerColor = PomoduoColor.themeColor;
+                  containerColor = PomoduoColor.focusColor;
                 } else {
-                  containerColor = Colors.amber.shade400;
+                  containerColor = PomoduoColor.breakColor;
                 }
               } else {
                 containerColor = PomoduoColor.foregroundColor;
@@ -156,7 +157,9 @@ class ToggleTimerButton extends StatelessWidget {
       return ElevatedButton(
         style: ElevatedButton.styleFrom(
           fixedSize: const Size.fromRadius(36),
-          primary: PomoduoColor.themeColor,
+          primary: timerProvider.sessionCount % 2 == 0
+              ? PomoduoColor.focusColor
+              : PomoduoColor.breakColor,
           shape: const CircleBorder(),
         ),
         child: ((() {
