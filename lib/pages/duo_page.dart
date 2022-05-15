@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:pomoduo/models/room.dart';
+import 'package:pomoduo/providers/timer_provider.dart';
 import 'package:pomoduo/utils/constants.dart';
 
 class DuoPage extends StatefulWidget {
@@ -34,9 +36,9 @@ class _DuoPageState extends State<DuoPage> {
         users: [],
         starstAt: date,
         status: false,
-        focusDuration: 60,
-        shortBreakDuration: 10,
-        longBreakDuration: 25);
+        focusDuration: context.watch<TimerProvider>().focusDuration,
+        shortBreakDuration: context.watch<TimerProvider>().shortBreakDuration,
+        longBreakDuration: context.watch<TimerProvider>().longBreakDuration);
 
     bool res = await room.createRoom();
     print(res);
@@ -46,7 +48,16 @@ class _DuoPageState extends State<DuoPage> {
     final roomId = await _openRoomDialog();
     var room = await joinRoom(roomId.toString());
     // room.then((value) => print(value.toMap()));
+    context.read<TimerProvider>().changeFocusDuration(room.focusDuration * 60);
+    context
+        .read<TimerProvider>()
+        .changeLongBreakDuration(room.longBreakDuration * 60);
+    context
+        .read<TimerProvider>()
+        .changeShortBreakDuration(room.shortBreakDuration * 60);
+
     print(room.toMap());
+
 // Check if room id is valid
 
 // if valid, change to timer
