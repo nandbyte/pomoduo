@@ -37,6 +37,7 @@ class TimerProvider with ChangeNotifier {
   int get longBreakDuration => _longBreakDuration.inSeconds;
   bool get isTimerRunning => _isTimerRunning;
   Duration get remainingDuration => _remainingDuration;
+  Duration get currentSessionDuration => _currentSessionDuration;
 
   TimerProvider() {
     _watch = Stopwatch();

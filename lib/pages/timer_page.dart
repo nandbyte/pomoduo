@@ -16,7 +16,9 @@ class TimerPage extends StatefulWidget {
 class _TimerPageState extends State<TimerPage> {
   @override
   void initState() {
-    context.read<TimerProvider>().prepareNewTimer();
+    if (!context.read<TimerProvider>().isTimerRunning) {
+      context.read<TimerProvider>().prepareNewTimer();
+    }
     super.initState();
   }
 
@@ -62,11 +64,10 @@ class ArcTimer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<TimerProvider>(builder: (context, timerProvider, widget) {
       return CircularPercentIndicator(
-        animation: true,
-        animationDuration: 1500,
         radius: 110,
         lineWidth: 15,
-        percent: timerProvider.remainingDuration.inSeconds / timerProvider.focusDuration,
+        percent: timerProvider.remainingDuration.inSeconds /
+            timerProvider.currentSessionDuration.inSeconds,
         circularStrokeCap: CircularStrokeCap.round,
         progressColor: PomoduoColor.themeColor,
         arcType: ArcType.FULL,
