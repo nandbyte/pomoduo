@@ -40,8 +40,6 @@ class ArcTimer extends StatelessWidget {
 
     String timerContent = "$minutesLeft:$secondsLeft";
 
-    print(timerContent);
-
     return timerContent;
   }
 

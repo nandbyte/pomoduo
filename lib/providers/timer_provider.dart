@@ -12,8 +12,6 @@ class TimerProvider with ChangeNotifier {
 // Timer data
   late Stopwatch _watch;
   late Timer _countdownTimer;
-
-  // Timer data
   bool _isTimerRunning = false;
   Duration _remainingDuration = Duration.zero;
 
