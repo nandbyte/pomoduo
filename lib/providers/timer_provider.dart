@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/number_symbols_data.dart';
 import 'package:pomoduo/models/room.dart';
 
 class TimerProvider with ChangeNotifier {
@@ -20,6 +19,9 @@ class TimerProvider with ChangeNotifier {
 
   // Session data
   int sessionCount = 0;
+
+  // TODO: Session status text handling
+  String sessionMode = "Focus";
 
   final List<Session> sessions = [
     Session.focus,
@@ -95,6 +97,7 @@ class TimerProvider with ChangeNotifier {
     _isTimerRunning = true;
     _watch.reset();
     _watch.start();
+    notifyListeners();
     _countdownTimer = Timer.periodic(const Duration(seconds: 1), _updateTimer);
   }
 
@@ -120,7 +123,7 @@ class TimerProvider with ChangeNotifier {
   }
 
   _processSessionData() {
-    sessionCount = (sessionCount + 1) % 7;
+    sessionCount = (sessionCount + 1) % 8;
     // TODO: load from storage and save session count and focus count both incremented by 1
   }
 }

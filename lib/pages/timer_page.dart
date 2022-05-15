@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:pomoduo/utils/constants.dart';
+import 'package:step_progress_indicator/step_progress_indicator.dart';
 
 class TimerPage extends StatefulWidget {
   const TimerPage({Key? key}) : super(key: key);
@@ -24,26 +25,33 @@ class _TimerPageState extends State<TimerPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: <Widget>[
-        const Text(
-          "Pomodoro",
-          style: PomoduoStyle.pageTitleStyle,
-        ),
-        const Center(
-          child: ArcTimer(),
-        ),
-        Column(
-          children: const [
-            ToggleTimerButton(),
-            SizedBox(
-              height: 64,
-            )
-          ],
-        ),
-      ],
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          const Text(
+            "Pomodoro",
+            style: PomoduoStyle.pageTitleStyle,
+          ),
+          const SizedBox(height: 108),
+          const Center(
+            child: ArcTimer(),
+          ),
+          const SizedBox(height: 24),
+          const Center(
+            child: SessionProgressIndicator(),
+          ),
+          const SizedBox(height: 108),
+          Column(
+            children: const [
+              ToggleTimerButton(),
+              SizedBox(
+                height: 64,
+              )
+            ],
+          ),
+        ],
+      ),
     );
   }
 }
@@ -81,6 +89,61 @@ class ArcTimer extends StatelessWidget {
         ),
       );
     });
+  }
+}
+
+class SessionProgressIndicator extends StatelessWidget {
+  const SessionProgressIndicator({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<TimerProvider>(
+      builder: (context, timerProvider, widget) {
+        return SizedBox(
+          width: 128,
+          child: StepProgressIndicator(
+            totalSteps: 7,
+            currentStep: timerProvider.sessionCount,
+            size: 14,
+            selectedColor: PomoduoColor.themeColor,
+            unselectedColor: PomoduoColor.foregroundColor,
+            // customColor: (index) => index % 2 == 0 ? PomoduoColor.themeColor : Colors.amber.shade400,
+            customStep: (index, color, _) {
+              Color containerColor;
+              IconData containerIconData;
+
+              if (index < timerProvider.sessionCount) {
+                containerIconData = Icons.check;
+
+                if (index % 2 == 0) {
+                  containerColor = PomoduoColor.themeColor;
+                } else {
+                  containerColor = Colors.amber.shade400;
+                }
+              } else {
+                containerColor = PomoduoColor.foregroundColor;
+                containerIconData = Icons.remove;
+              }
+
+              return Container(
+                decoration: BoxDecoration(
+                  color: containerColor,
+                  border: Border.all(),
+                  borderRadius: const BorderRadius.all(
+                    Radius.circular(20),
+                  ),
+                ),
+                child: Icon(
+                  containerIconData,
+                  color: PomoduoColor.backgroundColor,
+                  size: 8,
+                ),
+              );
+            },
+          ),
+        );
+      },
+    );
   }
 }
 
