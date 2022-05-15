@@ -19,10 +19,15 @@ Future<void> main() async {
     systemNavigationBarColor: PomoduoColor.backgroundColor,
     statusBarColor: PomoduoColor.backgroundColor,
   ));
-  runApp(MultiProvider(providers: [
-    ChangeNotifierProvider(create: (_) => TimerProvider()),
-    ChangeNotifierProvider(create: (_) => RoomProvider())
-  ], child: const Pomoduo()));
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => TimerProvider()),
+        ChangeNotifierProvider(create: (_) => RoomProvider())
+      ],
+      child: const Pomoduo(),
+    ),
+  );
 }
 
 class Pomoduo extends StatelessWidget {
