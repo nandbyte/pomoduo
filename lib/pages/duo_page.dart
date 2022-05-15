@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:pomoduo/providers/room_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:pomoduo/models/room.dart';
 import 'package:pomoduo/providers/timer_provider.dart';
 import 'package:pomoduo/utils/constants.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
 class DuoPage extends StatefulWidget {
   const DuoPage({Key? key}) : super(key: key);
@@ -52,7 +52,7 @@ class _DuoPageState extends State<DuoPage> {
           room.focusDuration * 60, room.longBreakDuration * 60, room.shortBreakDuration * 60);
       context.read<RoomProvider>().changeRoomName(room.roomName);
     } else {
-      _showToast(context, "A room already exist with name $roomName");
+      _showToast(context, "Room already exists: $roomName");
     }
   }
 
@@ -63,7 +63,9 @@ class _DuoPageState extends State<DuoPage> {
         backgroundColor: PomoduoColor.foregroundColor,
         content: Text(
           toastText,
-          style: const TextStyle(color: Colors.white),
+          style: GoogleFonts.montserrat(
+            textStyle: const TextStyle(color: Colors.white),
+          ),
         ),
         action: SnackBarAction(
           label: 'GOT IT',
@@ -93,6 +95,11 @@ class _DuoPageState extends State<DuoPage> {
     }
   }
 
+  // TODO: complete this function
+  _leaveRoom() async {
+    return;
+  }
+
   void _enterRoomId() {
     Navigator.of(context).pop(controller.text);
   }
@@ -117,13 +124,10 @@ class _DuoPageState extends State<DuoPage> {
             ElevatedButton(
               style: ButtonStyle(
                 backgroundColor: MaterialStateProperty.all<Color>(PomoduoColor.themeColor),
-                foregroundColor: MaterialStateProperty.all<Color>(Colors.white60),
+                foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
               ),
               onPressed: _enterRoomId,
-              child: const Text(
-                "Join",
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
+              child: const Text("Join"),
             ),
           ],
         ),
@@ -165,6 +169,7 @@ class _DuoPageState extends State<DuoPage> {
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
         const Center(child: Text("Duo Mode")),
         const SizedBox(
@@ -176,26 +181,51 @@ class _DuoPageState extends State<DuoPage> {
         const SizedBox(
           height: 16,
         ),
-        ElevatedButton(
-          style: ButtonStyle(
-            backgroundColor: MaterialStateProperty.all<Color>(PomoduoColor.themeColor),
-            foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
-          ),
-          onPressed: _createRoom,
-          child: const Text(
-            "Create Room",
-          ),
-        ),
-        ElevatedButton(
-          style: ButtonStyle(
-            backgroundColor: MaterialStateProperty.all<Color>(PomoduoColor.themeColor),
-            foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
-          ),
-          onPressed: _joinRoom,
-          child: const Text(
-            "Join Room",
-          ),
-        )
+        (() {
+          if (context.read<RoomProvider>().roomName == "-") {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                ElevatedButton(
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all<Color>(PomoduoColor.themeColor),
+                    foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+                  ),
+                  onPressed: _createRoom,
+                  child: const Text(
+                    "Create Room",
+                  ),
+                ),
+                ElevatedButton(
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all<Color>(PomoduoColor.themeColor),
+                    foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+                  ),
+                  onPressed: _joinRoom,
+                  child: const Text(
+                    "Join Room",
+                  ),
+                ),
+              ],
+            );
+          } else {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                ElevatedButton(
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all<Color>(PomoduoColor.themeColor),
+                    foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+                  ),
+                  onPressed: _leaveRoom,
+                  child: const Text(
+                    "Leave Room",
+                  ),
+                ),
+              ],
+            );
+          }
+        }())
       ],
     );
   }
@@ -207,9 +237,33 @@ class RoomName extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<RoomProvider>(builder: (context, roomProvider, widget) {
-      return Text(
-        "Room joined: ${roomProvider.roomName}",
-        style: const TextStyle(color: Colors.white70),
+      return Column(
+        children: [
+          const Text("Room"),
+          const SizedBox(height: 16),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(24.0),
+            decoration: BoxDecoration(
+              color: PomoduoColor.foregroundColor,
+              border: Border.all(
+                color: PomoduoColor.foregroundColor,
+              ),
+              borderRadius: const BorderRadius.all(
+                Radius.circular(20),
+              ),
+            ),
+            child: Center(
+              child: Text(
+                roomProvider.roomName,
+                style: const TextStyle(
+                  color: Colors.white70,
+                  fontSize: 24,
+                ),
+              ),
+            ),
+          ),
+        ],
       );
     });
   }
