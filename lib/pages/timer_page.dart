@@ -15,16 +15,29 @@ class TimerPage extends StatefulWidget {
 
 class _TimerPageState extends State<TimerPage> {
   @override
+  void initState() {
+    context.read<TimerProvider>().prepareNewTimer();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: const <Widget>[
-        Text("Timer"),
-        Center(
+      children: <Widget>[
+        const Text("Timer"),
+        const Center(
           child: ArcTimer(),
         ),
-        ToggleTimerButton(),
+        Column(
+          children: const [
+            ToggleTimerButton(),
+            SizedBox(
+              height: 64,
+            )
+          ],
+        ),
       ],
     );
   }
@@ -49,10 +62,11 @@ class ArcTimer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<TimerProvider>(builder: (context, timerProvider, widget) {
       return CircularPercentIndicator(
+        animation: true,
+        animationDuration: 1500,
         radius: 110,
         lineWidth: 15,
-        percent: timerProvider.remainingDuration.inSeconds /
-            timerProvider.focusDuration,
+        percent: timerProvider.remainingDuration.inSeconds / timerProvider.focusDuration,
         circularStrokeCap: CircularStrokeCap.round,
         progressColor: PomoduoColor.themeColor,
         arcType: ArcType.FULL,
@@ -72,21 +86,24 @@ class ToggleTimerButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<TimerProvider>(builder: (context, timerProvider, widget) {
-      return TextButton(
-        style: TextButton.styleFrom(
-          backgroundColor: PomoduoColor.themeColor,
+      return ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          fixedSize: const Size.fromRadius(36),
+          primary: PomoduoColor.themeColor,
           shape: const CircleBorder(),
         ),
         child: ((() {
           if (!timerProvider.isTimerRunning) {
-            return const Icon(Icons.play_arrow, color: Colors.white);
+            return const Icon(
+              Icons.play_arrow,
+              color: Colors.white,
+            );
           } else {
             return const Icon(Icons.stop, color: Colors.white);
           }
         })()),
-        onPressed: () => context
-            .read<TimerProvider>()
-            .toggleTimer(context.read<RoomProvider>().roomName),
+        onPressed: () =>
+            context.read<TimerProvider>().toggleTimer(context.read<RoomProvider>().roomName),
       );
     });
   }

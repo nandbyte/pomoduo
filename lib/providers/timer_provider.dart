@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/number_symbols_data.dart';
 import 'package:pomoduo/models/room.dart';
 
 class TimerProvider with ChangeNotifier {
@@ -14,7 +15,22 @@ class TimerProvider with ChangeNotifier {
   late Stopwatch _watch;
   late Timer _countdownTimer;
   bool _isTimerRunning = false;
+  Duration _currentSessionDuration = Duration.zero;
   Duration _remainingDuration = Duration.zero;
+
+  // Session data
+  int sessionCount = 0;
+
+  final List<Session> sessions = [
+    Session.focus,
+    Session.shortBreak,
+    Session.focus,
+    Session.shortBreak,
+    Session.focus,
+    Session.shortBreak,
+    Session.focus,
+    Session.longBreak
+  ];
 
   int get focusDuration => _focusDuration.inSeconds;
   int get shortBreakDuration => _shortBreakDuration.inSeconds;
@@ -24,6 +40,9 @@ class TimerProvider with ChangeNotifier {
 
   TimerProvider() {
     _watch = Stopwatch();
+
+    // TODO: load data from SharedPreferences
+    sessionCount = 0;
   }
 
   changeFocusDuration(int newDuration) {
@@ -41,10 +60,11 @@ class TimerProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  updateFromFetch(int newDuration, int newLongBreak, int newShortBrreakk) {
-    _focusDuration = Duration(seconds: newDuration);
+  updateFromFetch(int newFocusDuration, int newLongBreak, int newShortBreak) {
+    _focusDuration = Duration(seconds: newFocusDuration);
+    _shortBreakDuration = Duration(seconds: newShortBreak);
     _longBreakDuration = Duration(seconds: newLongBreak);
-    _shortBreakDuration = Duration(seconds: newShortBrreakk);
+
     notifyListeners();
   }
 
@@ -58,20 +78,31 @@ class TimerProvider with ChangeNotifier {
     }
   }
 
+  prepareNewTimer() {
+    if (sessions[sessionCount] == Session.focus) {
+      _currentSessionDuration = _focusDuration;
+    } else if (sessions[sessionCount] == Session.shortBreak) {
+      _currentSessionDuration = _shortBreakDuration;
+    } else {
+      _currentSessionDuration = _longBreakDuration;
+    }
+
+    _remainingDuration = _currentSessionDuration;
+  }
+
   _startTimer() {
     _isTimerRunning = true;
-    _countdownTimer = Timer.periodic(const Duration(seconds: 1), _updateTimer);
     _watch.reset();
     _watch.start();
-
-    notifyListeners();
+    _countdownTimer = Timer.periodic(const Duration(seconds: 1), _updateTimer);
   }
 
   _updateTimer(Timer timer) {
     if (_isTimerRunning) {
-      _remainingDuration = _focusDuration - _watch.elapsed;
+      _remainingDuration = _currentSessionDuration - _watch.elapsed;
       notifyListeners();
       if (_remainingDuration == Duration.zero) {
+        _processSessionData();
         _stopTimer();
       }
     }
@@ -81,8 +112,16 @@ class TimerProvider with ChangeNotifier {
     _countdownTimer.cancel();
     _watch.stop();
     _isTimerRunning = false;
-    _remainingDuration = Duration.zero;
+
+    prepareNewTimer();
 
     notifyListeners();
   }
+
+  _processSessionData() {
+    sessionCount = (sessionCount + 1) % 7;
+    // TODO: load from storage and save session count and focus count both incremented by 1
+  }
 }
+
+enum Session { focus, shortBreak, longBreak }

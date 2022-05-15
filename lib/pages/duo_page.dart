@@ -60,8 +60,16 @@ class _DuoPageState extends State<DuoPage> {
     final scaffold = ScaffoldMessenger.of(context);
     scaffold.showSnackBar(
       SnackBar(
-        content: Text(toastText),
-        action: SnackBarAction(label: 'UNDO', onPressed: scaffold.hideCurrentSnackBar),
+        backgroundColor: PomoduoColor.foregroundColor,
+        content: Text(
+          toastText,
+          style: const TextStyle(color: Colors.white),
+        ),
+        action: SnackBarAction(
+          label: 'GOT IT',
+          onPressed: scaffold.hideCurrentSnackBar,
+          textColor: PomoduoColor.themeColor,
+        ),
       ),
     );
   }
@@ -83,12 +91,9 @@ class _DuoPageState extends State<DuoPage> {
       context.read<RoomProvider>().changeRoomName("-");
       _showToast(context, "No room named: $roomName");
     }
-
-    print(room.toMap());
   }
 
   void _enterRoomId() {
-    print(controller.text.toUpperCase());
     Navigator.of(context).pop(controller.text);
   }
 
