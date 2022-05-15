@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:pomoduo/models/room.dart';
 
 class TimerProvider with ChangeNotifier {
   // Timer settings
@@ -47,10 +48,12 @@ class TimerProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  toggleTimer() {
+  toggleTimer(String roomName) {
     if (!_isTimerRunning) {
+      updateRoomStatus(true, roomName);
       _startTimer();
     } else {
+      updateRoomStatus(false, roomName);
       _stopTimer();
     }
   }

@@ -39,24 +39,28 @@ class _DuoPageState extends State<DuoPage> {
         starstAt: date,
         status: false,
         focusDuration: context.read<TimerProvider>().focusDuration ~/ 60,
-        shortBreakDuration: context.read<TimerProvider>().shortBreakDuration ~/ 60,
-        longBreakDuration: context.read<TimerProvider>().longBreakDuration ~/ 60);
+        shortBreakDuration:
+            context.read<TimerProvider>().shortBreakDuration ~/ 60,
+        longBreakDuration:
+            context.read<TimerProvider>().longBreakDuration ~/ 60);
 
     bool res = await room.createRoom();
     if (res) {
-      context.read<TimerProvider>().updateFromFetch(
-          room.focusDuration * 60, room.longBreakDuration * 60, room.shortBreakDuration * 60);
+      context.read<TimerProvider>().updateFromFetch(room.focusDuration * 60,
+          room.longBreakDuration * 60, room.shortBreakDuration * 60);
       context.read<RoomProvider>().changeRoomName(room.roomName);
+    } else {
+      _showToast(context, "A room already exist with name $roomId");
     }
-    print(res);
   }
 
-  void _showToast(BuildContext context) {
+  void _showToast(BuildContext context, String toastText) {
     final scaffold = ScaffoldMessenger.of(context);
     scaffold.showSnackBar(
       SnackBar(
-        content: const Text('Room Not found'),
-        action: SnackBarAction(label: 'UNDO', onPressed: scaffold.hideCurrentSnackBar),
+        content: Text(toastText),
+        action: SnackBarAction(
+            label: 'UNDO', onPressed: scaffold.hideCurrentSnackBar),
       ),
     );
   }
@@ -66,12 +70,12 @@ class _DuoPageState extends State<DuoPage> {
     var room = await joinRoom(roomId.toString());
     // room.then((value) => print(value.toMap()));
     if (room.roomName.toString() != '-1') {
-      context.read<TimerProvider>().updateFromFetch(
-          room.focusDuration * 60, room.longBreakDuration * 60, room.shortBreakDuration * 60);
+      context.read<TimerProvider>().updateFromFetch(room.focusDuration * 60,
+          room.longBreakDuration * 60, room.shortBreakDuration * 60);
       context.read<RoomProvider>().changeRoomName(room.roomName);
     } else {
       context.read<RoomProvider>().changeRoomName("-");
-      _showToast(context);
+      _showToast(context, "No room named: $roomId");
     }
 
     print(room.toMap());
@@ -105,8 +109,10 @@ class _DuoPageState extends State<DuoPage> {
           actions: [
             ElevatedButton(
               style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all<Color>(PomoduoColor.themeColor),
-                foregroundColor: MaterialStateProperty.all<Color>(Colors.white60),
+                backgroundColor:
+                    MaterialStateProperty.all<Color>(PomoduoColor.themeColor),
+                foregroundColor:
+                    MaterialStateProperty.all<Color>(Colors.white60),
               ),
               onPressed: _enterRoomId,
               child: const Text(
@@ -137,8 +143,10 @@ class _DuoPageState extends State<DuoPage> {
           actions: [
             ElevatedButton(
               style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all<Color>(PomoduoColor.themeColor),
-                foregroundColor: MaterialStateProperty.all<Color>(Colors.white60),
+                backgroundColor:
+                    MaterialStateProperty.all<Color>(PomoduoColor.themeColor),
+                foregroundColor:
+                    MaterialStateProperty.all<Color>(Colors.white60),
               ),
               onPressed: _enterRoomId,
               child: const Text(
@@ -167,7 +175,8 @@ class _DuoPageState extends State<DuoPage> {
         ),
         ElevatedButton(
           style: ButtonStyle(
-            backgroundColor: MaterialStateProperty.all<Color>(PomoduoColor.themeColor),
+            backgroundColor:
+                MaterialStateProperty.all<Color>(PomoduoColor.themeColor),
             foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
           ),
           onPressed: _createRoom,
@@ -177,7 +186,8 @@ class _DuoPageState extends State<DuoPage> {
         ),
         ElevatedButton(
           style: ButtonStyle(
-            backgroundColor: MaterialStateProperty.all<Color>(PomoduoColor.themeColor),
+            backgroundColor:
+                MaterialStateProperty.all<Color>(PomoduoColor.themeColor),
             foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
           ),
           onPressed: _joinRoom,

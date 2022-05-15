@@ -90,3 +90,18 @@ Future<Room> joinRoom(String _roomName) async {
 
   return room;
 }
+
+Future<bool> updateRoomStatus(bool status, String _roomName) async {
+  CollectionReference db = FirebaseFirestore.instance.collection("rooms");
+  var roomObj = await db.where("roomName", isEqualTo: _roomName).get();
+  if (roomObj.size > 0) {
+    for (var room in roomObj.docs) {
+      var id = room.id;
+      await db.doc(id).update({"status": status}).then((_) {
+        print("Updated to $status");
+        return status;
+      });
+    }
+  }
+  return false;
+}

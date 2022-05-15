@@ -1,4 +1,6 @@
+import 'package:pomoduo/providers/room_provider.dart';
 import 'package:pomoduo/providers/timer_provider.dart';
+
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
@@ -49,7 +51,8 @@ class ArcTimer extends StatelessWidget {
       return CircularPercentIndicator(
         radius: 110,
         lineWidth: 15,
-        percent: timerProvider.remainingDuration.inSeconds / timerProvider.focusDuration,
+        percent: timerProvider.remainingDuration.inSeconds /
+            timerProvider.focusDuration,
         circularStrokeCap: CircularStrokeCap.round,
         progressColor: PomoduoColor.themeColor,
         arcType: ArcType.FULL,
@@ -81,7 +84,9 @@ class ToggleTimerButton extends StatelessWidget {
             return const Icon(Icons.stop, color: Colors.white);
           }
         })()),
-        onPressed: () => context.read<TimerProvider>().toggleTimer(),
+        onPressed: () => context
+            .read<TimerProvider>()
+            .toggleTimer(context.read<RoomProvider>().roomName),
       );
     });
   }
