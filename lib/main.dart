@@ -7,6 +7,7 @@ import 'package:pomoduo/pages/duo_page.dart';
 import 'package:pomoduo/pages/settings_page.dart';
 import 'package:pomoduo/pages/timer_page.dart';
 import 'package:pomoduo/pages/statistics_page.dart';
+import 'package:pomoduo/providers/google_signin_provider.dart';
 import 'package:pomoduo/providers/room_provider.dart';
 import 'package:pomoduo/providers/timer_provider.dart';
 import 'package:pomoduo/utils/constants.dart';
@@ -23,7 +24,8 @@ Future<void> main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => TimerProvider()),
-        ChangeNotifierProvider(create: (_) => RoomProvider())
+        ChangeNotifierProvider(create: (_) => RoomProvider()),
+        ChangeNotifierProvider(create: (_) => GoogleSignInProvider()),
       ],
       child: const Pomoduo(),
     ),
@@ -60,12 +62,7 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
   int _selectedIndex = 0;
 
-  final List<Widget> _tabList = const <Widget>[
-    TimerPage(),
-    DuoPage(),
-    StatisticsPage(),
-    SettingsPage()
-  ];
+  List<Widget> _tabList = <Widget>[TimerPage(), DuoPage(), StatisticsPage(), SettingsPage()];
 
   void _changeTab(int index) {
     setState(() {
