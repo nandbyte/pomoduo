@@ -13,49 +13,78 @@ class TimerPage extends StatefulWidget {
 
 class _TimerPageState extends State<TimerPage> {
   @override
-  void initState() {
-    () => context.read<TimerProvider>().initializeTimer();
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: <Widget>[
-        const Text("Timer"),
+      children: const <Widget>[
+        Text("Timer"),
         Center(
-          child: CircularPercentIndicator(
-            radius: 110,
-            lineWidth: 15,
-            percent: context.read<TimerProvider>().timerPercentage,
-            circularStrokeCap: CircularStrokeCap.round,
-            progressColor: PomoduoColor.themeColor,
-            arcType: ArcType.FULL,
-            arcBackgroundColor: PomoduoColor.foregroundColor,
-            center: Text(
-              context.read<TimerProvider>().timerContent,
-              style: const TextStyle(fontSize: 32),
-            ),
-          ),
+          child: ArcTimer(),
         ),
-        Column(
-          children: [
-            TextButton(
-              style: TextButton.styleFrom(
-                backgroundColor: PomoduoColor.themeColor,
-                shape: const CircleBorder(),
-              ),
-              child: const Icon(
-                Icons.play_arrow,
-                color: Colors.white,
-              ),
-              onPressed: () => context.read<TimerProvider>().toggleTimer(),
-            ),
-          ],
-        ),
+        ToggleTimerButton(),
       ],
     );
+  }
+}
+
+class ArcTimer extends StatelessWidget {
+  const ArcTimer({Key? key}) : super(key: key);
+
+  String formatToTimerContent(int seconds) {
+    Duration duration = Duration(seconds: seconds);
+
+    String twoDigits(int number) => number.toString().padLeft(2, "0");
+    String minutesLeft = twoDigits(duration.inMinutes.remainder(60));
+    String secondsLeft = twoDigits(duration.inSeconds.remainder(60));
+
+    String timerContent = "$minutesLeft:$secondsLeft";
+
+    print(timerContent);
+
+    return timerContent;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<TimerProvider>(builder: (context, timerProvider, widget) {
+      return CircularPercentIndicator(
+        radius: 110,
+        lineWidth: 15,
+        percent: timerProvider.remainingDuration.inSeconds / timerProvider.focusDuration,
+        circularStrokeCap: CircularStrokeCap.round,
+        progressColor: PomoduoColor.themeColor,
+        arcType: ArcType.FULL,
+        arcBackgroundColor: PomoduoColor.foregroundColor,
+        center: Text(
+          formatToTimerContent(timerProvider.remainingDuration.inSeconds),
+          style: const TextStyle(fontSize: 32),
+        ),
+      );
+    });
+  }
+}
+
+class ToggleTimerButton extends StatelessWidget {
+  const ToggleTimerButton({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<TimerProvider>(builder: (context, timerProvider, widget) {
+      return TextButton(
+        style: TextButton.styleFrom(
+          backgroundColor: PomoduoColor.themeColor,
+          shape: const CircleBorder(),
+        ),
+        child: ((() {
+          if (!timerProvider.isTimerRunning) {
+            return const Icon(Icons.play_arrow, color: Colors.white);
+          } else {
+            return const Icon(Icons.stop, color: Colors.white);
+          }
+        })()),
+        onPressed: () => context.read<TimerProvider>().toggleTimer(),
+      );
+    });
   }
 }

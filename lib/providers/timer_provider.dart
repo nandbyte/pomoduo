@@ -5,95 +5,76 @@ import 'package:flutter/material.dart';
 
 class TimerProvider with ChangeNotifier {
   // Timer settings
-  int _focusDuration = 25 * 60;
-  int _shortBreakDuration = 5 * 60;
-  int _longBreakDuration = 15 * 60;
+  Duration _focusDuration = const Duration(seconds: 25 * 60);
+  Duration _shortBreakDuration = const Duration(seconds: 5 * 60);
+  Duration _longBreakDuration = const Duration(seconds: 15 * 60);
+
+// Timer data
+  late Stopwatch _watch;
+  late Timer _countdownTimer;
 
   // Timer data
   bool _isTimerRunning = false;
-  String _timerContent = "";
-  int _remainingTime = 0;
-  double _timerPercentage = 0;
-  late Timer _countdownTimer;
+  Duration _remainingDuration = Duration.zero;
 
-  int get focusDuration => _focusDuration;
-  int get shortBreakDuration => _shortBreakDuration;
-  int get longBreakDuration => _longBreakDuration;
+  int get focusDuration => _focusDuration.inSeconds;
+  int get shortBreakDuration => _shortBreakDuration.inSeconds;
+  int get longBreakDuration => _longBreakDuration.inSeconds;
   bool get isTimerRunning => _isTimerRunning;
-  String get timerContent => _timerContent;
-  double get timerPercentage => _timerPercentage;
+  Duration get remainingDuration => _remainingDuration;
+
+  TimerProvider() {
+    _watch = Stopwatch();
+  }
 
   changeFocusDuration(int newDuration) {
-    _focusDuration = newDuration;
+    _focusDuration = Duration(seconds: newDuration);
     notifyListeners();
   }
 
   changeShortBreakDuration(int newDuration) {
-    _shortBreakDuration = newDuration;
+    _shortBreakDuration = Duration(seconds: newDuration);
     notifyListeners();
   }
 
   changeLongBreakDuration(int newDuration) {
-    _longBreakDuration = newDuration;
-    notifyListeners();
-  }
-
-  String _formatToTimerContent(int seconds) {
-    Duration duration = Duration(seconds: seconds);
-
-    String twoDigits(int number) => number.toString().padLeft(2, "0");
-    String minutesLeft = twoDigits(duration.inMinutes.remainder(60));
-    String secondsLeft = twoDigits(duration.inSeconds.remainder(60));
-
-    String timerContent = "$minutesLeft:$secondsLeft";
-
-    return timerContent;
-  }
-
-  double _getTimerPercentage(int durationLeft, int totalDuration) {
-    double timerPercentage = (durationLeft / focusDuration);
-    return timerPercentage;
-  }
-
-  initializeTimer() {
-    _timerContent = _formatToTimerContent(_focusDuration);
-    _timerPercentage = _getTimerPercentage(_focusDuration, _focusDuration);
+    _longBreakDuration = Duration(seconds: newDuration);
     notifyListeners();
   }
 
   toggleTimer() {
-    if (_isTimerRunning) {
-      _stopTimer();
-    } else {
+    if (!_isTimerRunning) {
       _startTimer();
+    } else {
+      _stopTimer();
     }
   }
 
   _startTimer() {
-    _remainingTime = _focusDuration;
     _isTimerRunning = true;
-    _timerPercentage = 1;
-
     _countdownTimer = Timer.periodic(const Duration(seconds: 1), _updateTimer);
+    _watch.reset();
+    _watch.start();
+
+    notifyListeners();
   }
 
   _updateTimer(Timer timer) {
-    if (_remainingTime <= 0) {
-      _stopTimer();
-    } else {
-      _remainingTime--;
-      _timerContent = _formatToTimerContent(_remainingTime);
-      _timerPercentage = _getTimerPercentage(_remainingTime, _focusDuration);
+    if (_isTimerRunning) {
+      _remainingDuration = _focusDuration - _watch.elapsed;
+      notifyListeners();
+      if (_remainingDuration == Duration.zero) {
+        _stopTimer();
+      }
     }
-    notifyListeners();
   }
 
   _stopTimer() {
     _countdownTimer.cancel();
-    _isTimerRunning = true;
-    _remainingTime = 0;
-    _timerContent = _formatToTimerContent(_remainingTime);
-    _timerPercentage = _getTimerPercentage(_remainingTime, _focusDuration);
+    _watch.stop();
+    _isTimerRunning = false;
+    _remainingDuration = Duration.zero;
+
     notifyListeners();
   }
 }
