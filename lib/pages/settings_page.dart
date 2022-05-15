@@ -58,9 +58,7 @@ class _FocusTimeSettingsState extends State<FocusTimeSettings> {
         buttonValues: const [20, 25, 30, 35, 40, 45],
         defaultSelected: context.watch<TimerProvider>().focusDuration / 60,
         radioButtonValue: (value) {
-          context
-              .read<TimerProvider>()
-              .changeFocusDuration(int.parse(value.toString()) * 60);
+          context.read<TimerProvider>().changeFocusDuration(int.parse(value.toString()) * 60);
           print(value);
         },
       ),
@@ -102,9 +100,7 @@ class _ShortBreakTimeSettingsState extends State<ShortBreakTimeSettings> {
         buttonValues: const [5, 10, 15],
         defaultSelected: context.watch<TimerProvider>().shortBreakDuration / 60,
         radioButtonValue: (value) {
-          context
-              .read<TimerProvider>()
-              .changeShortBreakDuration(int.parse(value.toString()) * 60);
+          context.read<TimerProvider>().changeShortBreakDuration(int.parse(value.toString()) * 60);
           print(value);
         },
       ),
@@ -142,9 +138,7 @@ class _LongBreakTimeSettingsState extends State<LongBreakTimeSettings> {
         buttonValues: const [15, 20, 25],
         defaultSelected: context.watch<TimerProvider>().longBreakDuration / 60,
         radioButtonValue: (value) {
-          context
-              .read<TimerProvider>()
-              .changeLongBreakDuration(int.parse(value.toString()) * 60);
+          context.read<TimerProvider>().changeLongBreakDuration(int.parse(value.toString()) * 60);
           print(value);
         },
       ),
@@ -162,36 +156,79 @@ class AccountSettings extends StatefulWidget {
 class _AccountSettingsState extends State<AccountSettings> {
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        const Center(
-          child: Padding(
-            padding: EdgeInsets.fromLTRB(0, 36, 0, 16.0),
-            child: Text("Account"),
-          ),
-        ),
-        const Center(
-          child: Text("Not Logged In", style: TextStyle(color: Colors.white70)),
-        ),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(0, 12, 0, 16.0),
-          child: ElevatedButton.icon(
-            style: ButtonStyle(
-              backgroundColor:
-                  MaterialStateProperty.all<Color>(PomoduoColor.themeColor),
-              foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
-            ),
-            icon: Icon(Icons.g_mobiledata),
-            onPressed: () {
-              context.read<GoogleSignInProvider>().googleLogin();
-            },
-            label: const Text(
-              " Login with Google",
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          const Center(
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(0, 36, 0, 16.0),
+              child: Text("Account"),
             ),
           ),
-        ),
-      ],
+          (() {
+            if (!context.read<GoogleSignInProvider>().isSignedIn) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const Center(
+                    child: Text("Not logged in.", style: TextStyle(color: Colors.white70)),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 12, 0, 16.0),
+                    child: ElevatedButton.icon(
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all<Color>(PomoduoColor.themeColor),
+                        foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+                      ),
+                      icon: const Icon(Icons.g_mobiledata),
+                      onPressed: () => context.read<GoogleSignInProvider>().googleLogin(),
+                      label: const Text(
+                        "Login with Google",
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            } else {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const CircleAvatar(
+                    backgroundColor: PomoduoColor.foregroundColor,
+                    backgroundImage:
+                        NetworkImage("https://avatars.githubusercontent.com/u/38876495?v=4"),
+                  ),
+                  const SizedBox(height: 12),
+                  const Center(
+                    child: Text("Arctronic Sikder", style: TextStyle(color: Colors.white)),
+                  ),
+                  const SizedBox(height: 8),
+                  const Center(
+                    child: Text("(arctronic@shihab.com)", style: TextStyle(color: Colors.white70)),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 12, 0, 16.0),
+                    child: ElevatedButton.icon(
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all<Color>(PomoduoColor.themeColor),
+                        foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+                      ),
+                      icon: const Icon(Icons.logout),
+                      onPressed: () {
+                        context.read<GoogleSignInProvider>().googleLogin();
+                      },
+                      label: const Text(
+                        "Logout ",
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            }
+          }())
+        ],
+      ),
     );
   }
 }
