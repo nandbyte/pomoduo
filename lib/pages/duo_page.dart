@@ -28,29 +28,31 @@ class _DuoPageState extends State<DuoPage> {
     super.dispose();
   }
 
-  void _createRoom() async {
-    final roomId = await _createRoomDialog();
-    DateTime date = new DateTime.now().toLocal();
+  _createRoom() async {
+    final roomName = await _createRoomDialog();
 
+    if (roomName == null) {
+      return;
+    }
+
+    DateTime date = DateTime.now().toLocal();
     Room room = Room(
-        roomName: roomId.toString(),
+        roomName: roomName.toString(),
         numberOfUsers: 0,
         users: [],
         starstAt: date,
         status: false,
         focusDuration: context.read<TimerProvider>().focusDuration ~/ 60,
-        shortBreakDuration:
-            context.read<TimerProvider>().shortBreakDuration ~/ 60,
-        longBreakDuration:
-            context.read<TimerProvider>().longBreakDuration ~/ 60);
+        shortBreakDuration: context.read<TimerProvider>().shortBreakDuration ~/ 60,
+        longBreakDuration: context.read<TimerProvider>().longBreakDuration ~/ 60);
 
-    bool res = await room.createRoom();
-    if (res) {
-      context.read<TimerProvider>().updateFromFetch(room.focusDuration * 60,
-          room.longBreakDuration * 60, room.shortBreakDuration * 60);
+    bool result = await room.createRoom();
+    if (result) {
+      context.read<TimerProvider>().updateFromFetch(
+          room.focusDuration * 60, room.longBreakDuration * 60, room.shortBreakDuration * 60);
       context.read<RoomProvider>().changeRoomName(room.roomName);
     } else {
-      _showToast(context, "A room already exist with name $roomId");
+      _showToast(context, "A room already exist with name $roomName");
     }
   }
 
@@ -59,30 +61,30 @@ class _DuoPageState extends State<DuoPage> {
     scaffold.showSnackBar(
       SnackBar(
         content: Text(toastText),
-        action: SnackBarAction(
-            label: 'UNDO', onPressed: scaffold.hideCurrentSnackBar),
+        action: SnackBarAction(label: 'UNDO', onPressed: scaffold.hideCurrentSnackBar),
       ),
     );
   }
 
-  void _joinRoom() async {
-    final roomId = await _openRoomDialog();
-    var room = await joinRoom(roomId.toString());
-    // room.then((value) => print(value.toMap()));
+  _joinRoom() async {
+    final roomName = await _openRoomDialog();
+
+    if (roomName == null) {
+      return;
+    }
+
+    var room = await joinRoom(roomName.toString());
+
     if (room.roomName.toString() != '-1') {
-      context.read<TimerProvider>().updateFromFetch(room.focusDuration * 60,
-          room.longBreakDuration * 60, room.shortBreakDuration * 60);
+      context.read<TimerProvider>().updateFromFetch(
+          room.focusDuration * 60, room.longBreakDuration * 60, room.shortBreakDuration * 60);
       context.read<RoomProvider>().changeRoomName(room.roomName);
     } else {
       context.read<RoomProvider>().changeRoomName("-");
-      _showToast(context, "No room named: $roomId");
+      _showToast(context, "No room named: $roomName");
     }
 
     print(room.toMap());
-
-// Check if room id is valid
-
-// if valid, change to timer
   }
 
   void _enterRoomId() {
@@ -109,10 +111,8 @@ class _DuoPageState extends State<DuoPage> {
           actions: [
             ElevatedButton(
               style: ButtonStyle(
-                backgroundColor:
-                    MaterialStateProperty.all<Color>(PomoduoColor.themeColor),
-                foregroundColor:
-                    MaterialStateProperty.all<Color>(Colors.white60),
+                backgroundColor: MaterialStateProperty.all<Color>(PomoduoColor.themeColor),
+                foregroundColor: MaterialStateProperty.all<Color>(Colors.white60),
               ),
               onPressed: _enterRoomId,
               child: const Text(
@@ -143,10 +143,8 @@ class _DuoPageState extends State<DuoPage> {
           actions: [
             ElevatedButton(
               style: ButtonStyle(
-                backgroundColor:
-                    MaterialStateProperty.all<Color>(PomoduoColor.themeColor),
-                foregroundColor:
-                    MaterialStateProperty.all<Color>(Colors.white60),
+                backgroundColor: MaterialStateProperty.all<Color>(PomoduoColor.themeColor),
+                foregroundColor: MaterialStateProperty.all<Color>(Colors.white60),
               ),
               onPressed: _enterRoomId,
               child: const Text(
@@ -175,8 +173,7 @@ class _DuoPageState extends State<DuoPage> {
         ),
         ElevatedButton(
           style: ButtonStyle(
-            backgroundColor:
-                MaterialStateProperty.all<Color>(PomoduoColor.themeColor),
+            backgroundColor: MaterialStateProperty.all<Color>(PomoduoColor.themeColor),
             foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
           ),
           onPressed: _createRoom,
@@ -186,8 +183,7 @@ class _DuoPageState extends State<DuoPage> {
         ),
         ElevatedButton(
           style: ButtonStyle(
-            backgroundColor:
-                MaterialStateProperty.all<Color>(PomoduoColor.themeColor),
+            backgroundColor: MaterialStateProperty.all<Color>(PomoduoColor.themeColor),
             foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
           ),
           onPressed: _joinRoom,
