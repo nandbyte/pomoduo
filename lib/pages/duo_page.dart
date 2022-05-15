@@ -171,7 +171,12 @@ class _DuoPageState extends State<DuoPage> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
-        const Center(child: Text("Duo Mode")),
+        const Center(
+          child: Text(
+            "Duo Mode",
+            style: PomoduoStyle.pageTitleStyle,
+          ),
+        ),
         const SizedBox(
           height: 36,
         ),
@@ -239,7 +244,9 @@ class RoomName extends StatelessWidget {
     return Consumer<RoomProvider>(builder: (context, roomProvider, widget) {
       return Column(
         children: [
-          const Text("Room"),
+          const Text(
+            "Room",
+          ),
           const SizedBox(height: 16),
           Container(
             width: double.infinity,

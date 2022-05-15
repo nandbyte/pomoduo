@@ -18,7 +18,12 @@ class _SettingsPageState extends State<SettingsPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: const <Widget>[
-        Center(child: Text("Settings")),
+        Center(
+          child: Text(
+            "Settings",
+            style: PomoduoStyle.pageTitleStyle,
+          ),
+        ),
         FocusTimeSettings(),
         ShortBreakTimeSettings(),
         LongBreakTimeSettings(),

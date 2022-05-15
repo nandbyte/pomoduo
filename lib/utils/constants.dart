@@ -5,3 +5,9 @@ class PomoduoColor {
   static const Color foregroundColor = Color(0xFF36364B);
   static const Color themeColor = Color(0xFF664EFF);
 }
+
+class PomoduoStyle {
+  static const TextStyle pageTitleStyle = TextStyle(
+    fontSize: 18,
+  );
+}

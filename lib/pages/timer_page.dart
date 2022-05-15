@@ -28,7 +28,10 @@ class _TimerPageState extends State<TimerPage> {
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
-        const Text("Timer"),
+        const Text(
+          "Pomodoro",
+          style: PomoduoStyle.pageTitleStyle,
+        ),
         const Center(
           child: ArcTimer(),
         ),
