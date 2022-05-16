@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:pomoduo/providers/google_signin_provider.dart';
 import 'package:pomoduo/providers/room_provider.dart';
 import 'package:provider/provider.dart';
@@ -68,8 +67,9 @@ class _DuoPageState extends State<DuoPage> {
         backgroundColor: PomoduoColor.foregroundColor,
         content: Text(
           toastText,
-          style: GoogleFonts.montserrat(
-            textStyle: const TextStyle(color: Colors.white),
+          style: const TextStyle(
+            color: PomoduoColor.textColor,
+            fontFamily: "Quicksand",
           ),
         ),
         action: SnackBarAction(
@@ -270,8 +270,9 @@ class RoomDetails extends StatelessWidget {
                   backgroundColor: PomoduoColor.foregroundColor,
                   content: Text(
                     "Room name copied: ${roomProvider.roomName}",
-                    style: GoogleFonts.montserrat(
-                      textStyle: const TextStyle(color: Colors.white),
+                    style: const TextStyle(
+                      color: PomoduoColor.textColor,
+                      fontFamily: "Quicksand",
                     ),
                   ),
                   action: SnackBarAction(
