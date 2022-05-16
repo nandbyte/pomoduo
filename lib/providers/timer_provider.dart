@@ -18,10 +18,8 @@ class TimerProvider with ChangeNotifier {
   Duration _remainingDuration = Duration.zero;
 
   // Session data
-  int sessionCount = 0;
-
-  // TODO: Session status text handling
-  String sessionMode = "Focus";
+  int _sessionCount = 0;
+  String _sessionModeText = "Focus";
 
   final List<Session> sessions = [
     Session.focus,
@@ -40,12 +38,14 @@ class TimerProvider with ChangeNotifier {
   bool get isTimerRunning => _isTimerRunning;
   Duration get remainingDuration => _remainingDuration;
   Duration get currentSessionDuration => _currentSessionDuration;
+  int get sessionCount => _sessionCount;
+  String get sessionModeText => _sessionModeText;
 
   TimerProvider() {
     _watch = Stopwatch();
 
     // TODO: load data from SharedPreferences
-    sessionCount = 0;
+    _sessionCount = 0;
   }
 
   changeFocusDuration(int newDuration) {
@@ -82,15 +82,19 @@ class TimerProvider with ChangeNotifier {
   }
 
   prepareNewTimer() {
-    if (sessions[sessionCount] == Session.focus) {
+    if (sessions[_sessionCount] == Session.focus) {
       _currentSessionDuration = _focusDuration;
-    } else if (sessions[sessionCount] == Session.shortBreak) {
+      _sessionModeText = "Focus";
+    } else if (sessions[_sessionCount] == Session.shortBreak) {
       _currentSessionDuration = _shortBreakDuration;
+      _sessionModeText = "Short Break";
     } else {
       _currentSessionDuration = _longBreakDuration;
+      _sessionModeText = "Long Break";
     }
 
     _remainingDuration = _currentSessionDuration;
+    notifyListeners();
   }
 
   _startTimer() {
@@ -123,7 +127,7 @@ class TimerProvider with ChangeNotifier {
   }
 
   _processSessionData() {
-    sessionCount = (sessionCount + 1) % 8;
+    _sessionCount = (_sessionCount + 1) % 8;
     // TODO: load from storage and save session count and focus count both incremented by 1
   }
 }
