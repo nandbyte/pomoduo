@@ -1,3 +1,4 @@
+import 'package:pomoduo/models/room.dart';
 import 'package:pomoduo/providers/google_signin_provider.dart';
 import 'package:pomoduo/providers/room_provider.dart';
 import 'package:pomoduo/providers/timer_provider.dart';
@@ -183,20 +184,26 @@ class ToggleTimerButton extends StatelessWidget {
             return const Icon(Icons.stop, color: Colors.white);
           }
         })()),
-        onPressed: () {
+        onPressed: () async {
           if (!context.read<RoomProvider>().isDuoMode) {
-            context
-                .read<TimerProvider>()
-                .toggleTimer(context.read<RoomProvider>().roomName);
+            context.read<TimerProvider>().toogleUserTimer();
           } else {
-            if (context.read<GoogleSignInProvider>().user.id.toString() ==
-                context.read<RoomProvider>().roomAdmin) {
-              context
-                  .read<TimerProvider>()
-                  .toggleTimer(context.read<RoomProvider>().roomName);
-            } else {
-              showToast(context, "Only Admin can stat/stop timer");
-            }
+            await getRoomStatus(context.read<RoomProvider>().roomName)
+                .then((roomStatus) {
+              if (context.read<GoogleSignInProvider>().user.id.toString() ==
+                  context.read<RoomProvider>().roomAdmin) {
+                print("Admin clicked");
+                context
+                    .read<TimerProvider>()
+                    .toggleTimer(context.read<RoomProvider>().roomName);
+              } else {
+                if (roomStatus) {
+                  context.read<TimerProvider>().startNonAdminTimer();
+                } else {
+                  showToast(context, "Only Admin can stat/stop timer");
+                }
+              }
+            });
           }
         },
       );

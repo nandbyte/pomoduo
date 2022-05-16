@@ -75,10 +75,27 @@ class TimerProvider with ChangeNotifier {
     if (!_isTimerRunning) {
       updateRoomStatus(true, roomName);
       _startTimer();
+      _isTimerRunning = true;
     } else {
       updateRoomStatus(false, roomName);
       _stopTimer();
+      _isTimerRunning = false;
     }
+  }
+
+  toogleUserTimer() {
+    if (!_isTimerRunning) {
+      _startTimer();
+      _isTimerRunning = true;
+    } else {
+      _stopTimer();
+      _isTimerRunning = false;
+    }
+  }
+
+  startNonAdminTimer() {
+    _startTimer();
+    _isTimerRunning = true;
   }
 
   prepareNewTimer() {
