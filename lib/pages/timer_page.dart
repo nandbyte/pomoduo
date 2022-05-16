@@ -25,33 +25,32 @@ class _TimerPageState extends State<TimerPage> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          const Text(
-            "Pomodoro",
-            style: PomoduoStyle.pageTitleStyle,
-          ),
-          const SizedBox(height: 108),
-          const Center(
-            child: ArcTimer(),
-          ),
-          const SizedBox(height: 24),
-          const Center(
-            child: SessionProgressIndicator(),
-          ),
-          const SizedBox(height: 108),
-          Column(
-            children: const [
-              ToggleTimerButton(),
-              SizedBox(
-                height: 64,
-              )
-            ],
-          ),
-        ],
-      ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: <Widget>[
+        const Text(
+          "Pomodoro",
+          style: PomoduoStyle.pageTitleStyle,
+        ),
+        const SizedBox(height: 108),
+        const Center(
+          child: ArcTimer(),
+        ),
+        const SizedBox(height: 24),
+        const Center(
+          child: SessionProgressIndicator(),
+        ),
+        const SizedBox(height: 48),
+        Column(
+          children: const [
+            ToggleTimerButton(),
+            SizedBox(
+              height: 24,
+            )
+          ],
+        ),
+      ],
     );
   }
 }

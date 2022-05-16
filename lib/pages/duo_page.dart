@@ -191,7 +191,7 @@ class _DuoPageState extends State<DuoPage> {
           child: RoomDetails(),
         ),
         const SizedBox(
-          height: 16,
+          height: 36,
         ),
         (() {
           if (context.read<RoomProvider>().roomName == "-") {
@@ -206,6 +206,7 @@ class _DuoPageState extends State<DuoPage> {
                   onPressed: _createRoom,
                   child: const Text(
                     "Create Room",
+                    style: TextStyle(fontWeight: FontWeight.w700),
                   ),
                 ),
                 ElevatedButton(
@@ -216,6 +217,7 @@ class _DuoPageState extends State<DuoPage> {
                   onPressed: _joinRoom,
                   child: const Text(
                     "Join Room",
+                    style: TextStyle(fontWeight: FontWeight.w700),
                   ),
                 ),
               ],

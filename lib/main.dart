@@ -39,9 +39,12 @@ class Pomoduo extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
-        brightness: Brightness.dark,
-        primarySwatch: Colors.deepPurple,
         visualDensity: VisualDensity.adaptivePlatformDensity,
+        colorScheme: ColorScheme.fromSwatch(
+          brightness: Brightness.dark,
+          primarySwatch: Colors.deepPurple,
+          accentColor: Colors.transparent,
+        ),
         textTheme: Theme.of(context).textTheme.apply(
               bodyColor: PomoduoColor.textColor,
               displayColor: PomoduoColor.textColor,

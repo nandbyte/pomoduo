@@ -44,31 +44,33 @@ class FocusTimeSettings extends StatefulWidget {
 class _FocusTimeSettingsState extends State<FocusTimeSettings> {
   @override
   Widget build(BuildContext context) {
-    return Column(children: <Widget>[
-      const Padding(
-        padding: EdgeInsets.fromLTRB(0, 36, 0, 16.0),
-        child: Text("Focus Time"),
-      ),
-      CustomRadioButton(
-        elevation: 0,
-        absoluteZeroSpacing: false,
-        selectedColor: PomoduoColor.themeColor,
-        unSelectedColor: PomoduoColor.foregroundColor,
-        buttonTextStyle: const ButtonTextStyle(
-          selectedColor: Colors.white,
-          unSelectedColor: Colors.white,
+    return SingleChildScrollView(
+      child: Column(children: <Widget>[
+        const Padding(
+          padding: EdgeInsets.fromLTRB(0, 36, 0, 16.0),
+          child: Text("Focus Time"),
         ),
-        enableShape: true,
-        enableButtonWrap: true,
-        buttonLables: const ["20 m", "25 m", "30 m", "35 m", "40 m", "45 m"],
-        buttonValues: const [20, 25, 30, 35, 40, 45],
-        defaultSelected: context.watch<TimerProvider>().focusDuration / 60,
-        radioButtonValue: (value) {
-          context.read<TimerProvider>().changeFocusDuration(int.parse(value.toString()) * 60);
-          print(value);
-        },
-      ),
-    ]);
+        CustomRadioButton(
+          elevation: 0,
+          absoluteZeroSpacing: false,
+          selectedColor: PomoduoColor.themeColor,
+          unSelectedColor: PomoduoColor.foregroundColor,
+          buttonTextStyle: const ButtonTextStyle(
+            selectedColor: Colors.white,
+            unSelectedColor: Colors.white,
+          ),
+          enableShape: true,
+          enableButtonWrap: true,
+          buttonLables: const ["20 m", "25 m", "30 m", "35 m", "40 m", "45 m"],
+          buttonValues: const [20, 25, 30, 35, 40, 45],
+          defaultSelected: context.watch<TimerProvider>().focusDuration / 60,
+          radioButtonValue: (value) {
+            context.read<TimerProvider>().changeFocusDuration(int.parse(value.toString()) * 60);
+            print(value);
+          },
+        ),
+      ]),
+    );
   }
 }
 
@@ -214,6 +216,7 @@ class _AccountSettingsState extends State<AccountSettings> {
                           },
                           label: const Text(
                             "Login with Google",
+                            style: TextStyle(fontWeight: FontWeight.w700),
                           ),
                         ),
                       ),
@@ -233,12 +236,12 @@ class _AccountSettingsState extends State<AccountSettings> {
                       Center(
                         child: Text(
                             context.read<GoogleSignInProvider>().user.displayName.toString(),
-                            style: TextStyle(color: Colors.white)),
+                            style: const TextStyle(color: Colors.white)),
                       ),
                       const SizedBox(height: 8),
                       Center(
                         child: Text(context.read<GoogleSignInProvider>().user.email.toString(),
-                            style: TextStyle(color: Colors.white70)),
+                            style: const TextStyle(color: Colors.white70)),
                       ),
                       Padding(
                         padding: const EdgeInsets.fromLTRB(0, 12, 0, 16.0),
@@ -254,6 +257,7 @@ class _AccountSettingsState extends State<AccountSettings> {
                           },
                           label: const Text(
                             "Logout ",
+                            style: TextStyle(fontWeight: FontWeight.w700),
                           ),
                         ),
                       ),

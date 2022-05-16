@@ -12,18 +12,30 @@ class _StatisticsPageState extends State<StatisticsPage> {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: const <Widget>[
-          Center(
-            child: Text(
-              "Statistics",
-              style: PomoduoStyle.pageTitleStyle,
+      child: SizedBox(
+        height: MediaQuery.of(context).size.height,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: const <Widget>[
+            Center(
+              child: Text(
+                "Statistics",
+                style: PomoduoStyle.pageTitleStyle,
+              ),
             ),
-          ),
-          SizedBox(height: 36),
-          TotalStatistics(),
-        ],
+            SizedBox(height: 36),
+            TotalStatistics(),
+            SizedBox(height: 36),
+            TotalStatistics(),
+            SizedBox(height: 36),
+            TotalStatistics(),
+            SizedBox(height: 36),
+            TotalStatistics(),
+            SizedBox(height: 36),
+            TotalStatistics(),
+          ],
+        ),
       ),
     );
   }
