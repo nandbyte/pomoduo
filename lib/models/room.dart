@@ -27,7 +27,7 @@ class Room {
     return {
       'roomName': roomName,
       'adminID': adminID,
-      'numberOfUsres': numberOfUsers,
+      'numberOfUsers': numberOfUsers,
       'users': users,
       'starstAt': starstAt,
       'focusDuration': focusDuration,
@@ -44,6 +44,7 @@ class Room {
     if (roomsWithSameName.size > 0) {
       return false;
     } else {
+      numberOfUsers = 1;
       await db.add(toMap());
     }
     return true;
