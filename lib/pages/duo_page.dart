@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:pomoduo/providers/google_signin_provider.dart';
 import 'package:pomoduo/providers/room_provider.dart';
@@ -46,15 +47,13 @@ class _DuoPageState extends State<DuoPage> {
         starstAt: date,
         status: false,
         focusDuration: context.read<TimerProvider>().focusDuration ~/ 60,
-        shortBreakDuration:
-            context.read<TimerProvider>().shortBreakDuration ~/ 60,
-        longBreakDuration:
-            context.read<TimerProvider>().longBreakDuration ~/ 60);
+        shortBreakDuration: context.read<TimerProvider>().shortBreakDuration ~/ 60,
+        longBreakDuration: context.read<TimerProvider>().longBreakDuration ~/ 60);
 
     bool result = await room.createRoom();
     if (result) {
-      context.read<TimerProvider>().updateFromFetch(room.focusDuration * 60,
-          room.longBreakDuration * 60, room.shortBreakDuration * 60);
+      context.read<TimerProvider>().updateFromFetch(
+          room.focusDuration * 60, room.longBreakDuration * 60, room.shortBreakDuration * 60);
       context.read<RoomProvider>().changeRoomName(room.roomName);
     } else {
       _showToast(context, "Room already exists: $roomName");
@@ -65,6 +64,7 @@ class _DuoPageState extends State<DuoPage> {
     final scaffold = ScaffoldMessenger.of(context);
     scaffold.showSnackBar(
       SnackBar(
+        duration: const Duration(seconds: 2),
         backgroundColor: PomoduoColor.foregroundColor,
         content: Text(
           toastText,
@@ -91,8 +91,8 @@ class _DuoPageState extends State<DuoPage> {
     var room = await joinRoom(roomName.toString());
 
     if (room.roomName.toString() != '-1') {
-      context.read<TimerProvider>().updateFromFetch(room.focusDuration * 60,
-          room.longBreakDuration * 60, room.shortBreakDuration * 60);
+      context.read<TimerProvider>().updateFromFetch(
+          room.focusDuration * 60, room.longBreakDuration * 60, room.shortBreakDuration * 60);
       context.read<RoomProvider>().changeRoomName(room.roomName);
       addJoinHistory(roomName.toString(), DateTime.now().toString(),
           context.read<GoogleSignInProvider>().documentId.toString());
@@ -130,8 +130,7 @@ class _DuoPageState extends State<DuoPage> {
           actions: [
             ElevatedButton(
               style: ButtonStyle(
-                backgroundColor:
-                    MaterialStateProperty.all<Color>(PomoduoColor.themeColor),
+                backgroundColor: MaterialStateProperty.all<Color>(PomoduoColor.themeColor),
                 foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
               ),
               onPressed: _enterRoomId,
@@ -160,10 +159,8 @@ class _DuoPageState extends State<DuoPage> {
           actions: [
             ElevatedButton(
               style: ButtonStyle(
-                backgroundColor:
-                    MaterialStateProperty.all<Color>(PomoduoColor.themeColor),
-                foregroundColor:
-                    MaterialStateProperty.all<Color>(Colors.white60),
+                backgroundColor: MaterialStateProperty.all<Color>(PomoduoColor.themeColor),
+                foregroundColor: MaterialStateProperty.all<Color>(Colors.white60),
               ),
               onPressed: _enterRoomId,
               child: const Text(
@@ -191,7 +188,7 @@ class _DuoPageState extends State<DuoPage> {
           height: 36,
         ),
         const Center(
-          child: RoomName(),
+          child: RoomDetails(),
         ),
         const SizedBox(
           height: 16,
@@ -203,10 +200,8 @@ class _DuoPageState extends State<DuoPage> {
               children: [
                 ElevatedButton(
                   style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all<Color>(
-                        PomoduoColor.themeColor),
-                    foregroundColor:
-                        MaterialStateProperty.all<Color>(Colors.white),
+                    backgroundColor: MaterialStateProperty.all<Color>(PomoduoColor.themeColor),
+                    foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
                   ),
                   onPressed: _createRoom,
                   child: const Text(
@@ -215,10 +210,8 @@ class _DuoPageState extends State<DuoPage> {
                 ),
                 ElevatedButton(
                   style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all<Color>(
-                        PomoduoColor.themeColor),
-                    foregroundColor:
-                        MaterialStateProperty.all<Color>(Colors.white),
+                    backgroundColor: MaterialStateProperty.all<Color>(PomoduoColor.themeColor),
+                    foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
                   ),
                   onPressed: _joinRoom,
                   child: const Text(
@@ -233,10 +226,8 @@ class _DuoPageState extends State<DuoPage> {
               children: [
                 ElevatedButton(
                   style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all<Color>(
-                        PomoduoColor.themeColor),
-                    foregroundColor:
-                        MaterialStateProperty.all<Color>(Colors.white),
+                    backgroundColor: MaterialStateProperty.all<Color>(PomoduoColor.themeColor),
+                    foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
                   ),
                   onPressed: _leaveRoom,
                   child: const Text(
@@ -252,8 +243,8 @@ class _DuoPageState extends State<DuoPage> {
   }
 }
 
-class RoomName extends StatelessWidget {
-  const RoomName({Key? key}) : super(key: key);
+class RoomDetails extends StatelessWidget {
+  const RoomDetails({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -261,7 +252,60 @@ class RoomName extends StatelessWidget {
       return Column(
         children: [
           const Text(
-            "Room",
+            "Room Name",
+          ),
+          const SizedBox(height: 16),
+          GestureDetector(
+            onTap: () {
+              Clipboard.setData(
+                ClipboardData(
+                  text: roomProvider.roomName.toString(),
+                ),
+              );
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  duration: const Duration(seconds: 2),
+                  backgroundColor: PomoduoColor.foregroundColor,
+                  content: Text(
+                    "Room name copied: ${roomProvider.roomName}",
+                    style: GoogleFonts.montserrat(
+                      textStyle: const TextStyle(color: Colors.white),
+                    ),
+                  ),
+                  action: SnackBarAction(
+                    label: "GOT IT",
+                    onPressed: ScaffoldMessenger.of(context).hideCurrentSnackBar,
+                    textColor: PomoduoColor.themeColor,
+                  ),
+                ),
+              );
+            },
+            child: Container(
+              padding: const EdgeInsets.all(24.0),
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: PomoduoColor.foregroundColor,
+                border: Border.all(
+                  color: PomoduoColor.foregroundColor,
+                ),
+                borderRadius: const BorderRadius.all(
+                  Radius.circular(20),
+                ),
+              ),
+              child: Center(
+                child: Text(
+                  roomProvider.roomName,
+                  style: const TextStyle(
+                    color: Colors.white70,
+                    fontSize: 24,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 48),
+          const Text(
+            "Room Members",
           ),
           const SizedBox(height: 16),
           Container(
@@ -278,7 +322,7 @@ class RoomName extends StatelessWidget {
             ),
             child: Center(
               child: Text(
-                roomProvider.roomName,
+                roomProvider.numberOfUsers.toString(),
                 style: const TextStyle(
                   color: Colors.white70,
                   fontSize: 24,
