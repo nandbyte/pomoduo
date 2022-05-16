@@ -86,12 +86,13 @@ class _DuoPageState extends State<DuoPage> {
     var room = await context.read<RoomProvider>().joinRoom(
         roomName.toString(), context.read<GoogleSignInProvider>().user.id);
 
+    context.read<RoomProvider>().joinRoom(
+        roomName.toString(), context.read<GoogleSignInProvider>().user.id);
+
     if (room.roomName.toString() != '-1') {
       context.read<TimerProvider>().updateFromFetch(room.focusDuration * 60,
           room.longBreakDuration * 60, room.shortBreakDuration * 60);
       context.read<RoomProvider>().changeRoomName(room.roomName);
-      addJoinHistory(roomName.toString(), DateTime.now().toString(),
-          context.read<GoogleSignInProvider>().documentId.toString());
       context.read<RoomProvider>().changeDuoMode(true);
       context.read<RoomProvider>().changeRoomAdmin(room.adminID);
     } else {

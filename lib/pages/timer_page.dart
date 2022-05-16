@@ -198,11 +198,7 @@ class ToggleTimerButton extends StatelessWidget {
                     .read<TimerProvider>()
                     .toggleTimer(context.read<RoomProvider>().roomName);
               } else {
-                if (roomStatus) {
-                  context.read<TimerProvider>().startNonAdminTimer();
-                } else {
-                  showToast(context, "Only Admin can stat/stop timer");
-                }
+                showToast(context, "Only Admin can stat/stop timer");
               }
             });
           }

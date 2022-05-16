@@ -139,7 +139,10 @@ class RoomProvider extends ChangeNotifier {
       }
     });
     if (!room.users.contains(userID)) {
-      await FirebaseFirestore.instance.collection("rooms").doc(docId).update({
+      await FirebaseFirestore.instance
+          .collection("rooms")
+          .doc(_roomDocId)
+          .update({
         "users": FieldValue.arrayUnion([userID.toString()]),
         "numberOfUsers": FieldValue.increment(1),
       });
