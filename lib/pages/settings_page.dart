@@ -48,7 +48,10 @@ class _FocusTimeSettingsState extends State<FocusTimeSettings> {
       child: Column(children: <Widget>[
         const Padding(
           padding: EdgeInsets.fromLTRB(0, 36, 0, 16.0),
-          child: Text("Focus Time"),
+          child: Text(
+            "Focus Time",
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
         ),
         CustomRadioButton(
           elevation: 0,
@@ -91,7 +94,10 @@ class _ShortBreakTimeSettingsState extends State<ShortBreakTimeSettings> {
     return Column(children: <Widget>[
       const Padding(
         padding: EdgeInsets.fromLTRB(0, 36, 0, 16.0),
-        child: Text("Short Break Time"),
+        child: Text(
+          "Short Break Time",
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
       ),
       CustomRadioButton(
         elevation: 0,
@@ -129,7 +135,10 @@ class _LongBreakTimeSettingsState extends State<LongBreakTimeSettings> {
     return Column(children: <Widget>[
       const Padding(
         padding: EdgeInsets.fromLTRB(0, 36, 0, 16.0),
-        child: Text("Long Break Time"),
+        child: Text(
+          "Long Break Time",
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
       ),
       CustomRadioButton(
         elevation: 0,
@@ -188,7 +197,10 @@ class _AccountSettingsState extends State<AccountSettings> {
           const Center(
             child: Padding(
               padding: EdgeInsets.fromLTRB(0, 36, 0, 16.0),
-              child: Text("Account"),
+              child: Text(
+                "Account",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
             ),
           ),
           Consumer<GoogleSignInProvider>(
