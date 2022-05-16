@@ -107,6 +107,28 @@ class RoomProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> leaveRoom(String roomName, String userID) async {
+    var rooms = await FirebaseFirestore.instance
+        .collection("rooms")
+        .where("roomName", isEqualTo: roomName)
+        .get();
+    for (var room in rooms.docs) {
+      var id = room.id;
+      List<String> currentUsers = List.castFrom(room.data()["users"]);
+      if (currentUsers.contains(userID)) {
+        await FirebaseFirestore.instance.collection("rooms").doc(id).update({
+          "users": FieldValue.arrayRemove([userID.toString()]),
+          "numberOfUsers": FieldValue.increment(-1),
+        });
+        break;
+      }
+    }
+    _roomName = "-";
+    _numberOfUsers = 0;
+    _isDuoMode = false;
+    notifyListeners();
+  }
+
   void showError(String error) {
     _roomError = error;
     notifyListeners();

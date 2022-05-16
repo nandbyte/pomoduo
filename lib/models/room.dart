@@ -37,7 +37,7 @@ class Room {
     };
   }
 
-  Future<bool> createRoom() async {
+  Future<bool> createRoom(String userrID) async {
     CollectionReference db = FirebaseFirestore.instance.collection("rooms");
     var roomsWithSameName =
         await db.where("roomName", isEqualTo: roomName).get();
@@ -45,6 +45,7 @@ class Room {
       return false;
     } else {
       numberOfUsers = 1;
+      users = [userrID];
       await db.add(toMap());
     }
     return true;
@@ -97,24 +98,6 @@ Future<Room> joinRoom(String _roomName, String userID) async {
     });
   }
   return room;
-}
-
-Future<void> leaveRoom(String roomName, String userID) async {
-  var rooms = await FirebaseFirestore.instance
-      .collection("rooms")
-      .where("roomName", isEqualTo: roomName)
-      .get();
-  for (var room in rooms.docs) {
-    var id = room.id;
-    List<String> currentUsers = List.castFrom(room.data()["users"]);
-    if (currentUsers.contains(userID)) {
-      await FirebaseFirestore.instance.collection("rooms").doc(id).update({
-        "users": FieldValue.arrayRemove([userID.toString()]),
-        "numberOfUsers": FieldValue.increment(-1),
-      });
-      break;
-    }
-  }
 }
 
 Future<bool> updateRoomStatus(bool status, String _roomName) async {

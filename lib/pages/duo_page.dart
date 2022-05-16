@@ -42,7 +42,9 @@ class _DuoPageState extends State<DuoPage> {
     if (roomName == null) {
       return;
     }
-    context.read<RoomProvider>().changeRoomAdmin(context.read<GoogleSignInProvider>().user.id);
+    context
+        .read<RoomProvider>()
+        .changeRoomAdmin(context.read<GoogleSignInProvider>().user.id);
 
     DateTime date = DateTime.now().toLocal();
     Room room = Room(
@@ -53,13 +55,16 @@ class _DuoPageState extends State<DuoPage> {
         starstAt: date,
         status: false,
         focusDuration: context.read<TimerProvider>().focusDuration ~/ 60,
-        shortBreakDuration: context.read<TimerProvider>().shortBreakDuration ~/ 60,
-        longBreakDuration: context.read<TimerProvider>().longBreakDuration ~/ 60);
+        shortBreakDuration:
+            context.read<TimerProvider>().shortBreakDuration ~/ 60,
+        longBreakDuration:
+            context.read<TimerProvider>().longBreakDuration ~/ 60);
 
-    bool result = await room.createRoom();
+    bool result =
+        await room.createRoom(context.read<GoogleSignInProvider>().user.id);
     if (result) {
-      context.read<TimerProvider>().updateFromFetch(
-          room.focusDuration * 60, room.longBreakDuration * 60, room.shortBreakDuration * 60);
+      context.read<TimerProvider>().updateFromFetch(room.focusDuration * 60,
+          room.longBreakDuration * 60, room.shortBreakDuration * 60);
       context.read<RoomProvider>().changeRoomName(room.roomName);
       context.read<RoomProvider>().changeDuoMode(true);
     } else {
@@ -78,11 +83,12 @@ class _DuoPageState extends State<DuoPage> {
       return;
     }
 
-    var room = await joinRoom(roomName.toString(), context.read<GoogleSignInProvider>().user.id);
+    var room = await joinRoom(
+        roomName.toString(), context.read<GoogleSignInProvider>().user.id);
 
     if (room.roomName.toString() != '-1') {
-      context.read<TimerProvider>().updateFromFetch(
-          room.focusDuration * 60, room.longBreakDuration * 60, room.shortBreakDuration * 60);
+      context.read<TimerProvider>().updateFromFetch(room.focusDuration * 60,
+          room.longBreakDuration * 60, room.shortBreakDuration * 60);
       context.read<RoomProvider>().changeRoomName(room.roomName);
       addJoinHistory(roomName.toString(), DateTime.now().toString(),
           context.read<GoogleSignInProvider>().documentId.toString());
@@ -96,7 +102,9 @@ class _DuoPageState extends State<DuoPage> {
 
   // TODO: complete this function
   _leaveRoom() async {
-    leaveRoom(context.read<RoomProvider>().roomName, context.read<GoogleSignInProvider>().user.id);
+    context.read<RoomProvider>().leaveRoom(
+        context.read<RoomProvider>().roomName,
+        context.read<GoogleSignInProvider>().user.id);
     return;
   }
 
@@ -123,7 +131,8 @@ class _DuoPageState extends State<DuoPage> {
           actions: [
             ElevatedButton(
               style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all<Color>(PomoduoColor.themeColor),
+                backgroundColor:
+                    MaterialStateProperty.all<Color>(PomoduoColor.themeColor),
                 foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
               ),
               onPressed: _enterRoomId,
@@ -152,8 +161,10 @@ class _DuoPageState extends State<DuoPage> {
           actions: [
             ElevatedButton(
               style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all<Color>(PomoduoColor.themeColor),
-                foregroundColor: MaterialStateProperty.all<Color>(Colors.white60),
+                backgroundColor:
+                    MaterialStateProperty.all<Color>(PomoduoColor.themeColor),
+                foregroundColor:
+                    MaterialStateProperty.all<Color>(Colors.white60),
               ),
               onPressed: _enterRoomId,
               child: const Text(
@@ -195,8 +206,10 @@ class _DuoPageState extends State<DuoPage> {
                   children: [
                     ElevatedButton(
                       style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all<Color>(PomoduoColor.themeColor),
-                        foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+                        backgroundColor: MaterialStateProperty.all<Color>(
+                            PomoduoColor.themeColor),
+                        foregroundColor:
+                            MaterialStateProperty.all<Color>(Colors.white),
                       ),
                       onPressed: _createRoom,
                       child: const Text(
@@ -206,8 +219,10 @@ class _DuoPageState extends State<DuoPage> {
                     ),
                     ElevatedButton(
                       style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all<Color>(PomoduoColor.themeColor),
-                        foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+                        backgroundColor: MaterialStateProperty.all<Color>(
+                            PomoduoColor.themeColor),
+                        foregroundColor:
+                            MaterialStateProperty.all<Color>(Colors.white),
                       ),
                       onPressed: _joinRoom,
                       child: const Text(
@@ -223,8 +238,10 @@ class _DuoPageState extends State<DuoPage> {
                   children: [
                     ElevatedButton(
                       style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all<Color>(PomoduoColor.themeColor),
-                        foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+                        backgroundColor: MaterialStateProperty.all<Color>(
+                            PomoduoColor.themeColor),
+                        foregroundColor:
+                            MaterialStateProperty.all<Color>(Colors.white),
                       ),
                       onPressed: _leaveRoom,
                       child: const Text(
@@ -274,7 +291,8 @@ class RoomDetails extends StatelessWidget {
                   ),
                   action: SnackBarAction(
                     label: "GOT IT",
-                    onPressed: ScaffoldMessenger.of(context).hideCurrentSnackBar,
+                    onPressed:
+                        ScaffoldMessenger.of(context).hideCurrentSnackBar,
                     textColor: PomoduoColor.themeColor,
                   ),
                 ),
