@@ -1,5 +1,7 @@
+import 'package:pomoduo/providers/google_signin_provider.dart';
 import 'package:pomoduo/providers/room_provider.dart';
 import 'package:pomoduo/providers/timer_provider.dart';
+import 'package:pomoduo/utils/showToast.dart';
 
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
@@ -79,8 +81,9 @@ class ArcTimer extends StatelessWidget {
         percent: timerProvider.remainingDuration.inSeconds /
             timerProvider.currentSessionDuration.inSeconds,
         circularStrokeCap: CircularStrokeCap.round,
-        progressColor:
-            timerProvider.sessionCount % 2 == 0 ? PomoduoColor.focusColor : PomoduoColor.breakColor,
+        progressColor: timerProvider.sessionCount % 2 == 0
+            ? PomoduoColor.focusColor
+            : PomoduoColor.breakColor,
         arcType: ArcType.FULL,
         arcBackgroundColor: PomoduoColor.foregroundColor,
         center: Column(
@@ -180,8 +183,22 @@ class ToggleTimerButton extends StatelessWidget {
             return const Icon(Icons.stop, color: Colors.white);
           }
         })()),
-        onPressed: () =>
-            context.read<TimerProvider>().toggleTimer(context.read<RoomProvider>().roomName),
+        onPressed: () {
+          if (!context.read<RoomProvider>().isDuoMode) {
+            context
+                .read<TimerProvider>()
+                .toggleTimer(context.read<RoomProvider>().roomName);
+          } else {
+            if (context.read<GoogleSignInProvider>().user.id.toString() ==
+                context.read<RoomProvider>().roomAdmin) {
+              context
+                  .read<TimerProvider>()
+                  .toggleTimer(context.read<RoomProvider>().roomName);
+            } else {
+              showToast(context, "Only Admin can stat/stop timer");
+            }
+          }
+        },
       );
     });
   }

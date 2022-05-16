@@ -11,6 +11,8 @@ class RoomProvider extends ChangeNotifier {
   int _longBreakDuration = 15;
   bool _isTimerRunning = false;
   String _roomError = "";
+  bool _isDuoMode = false;
+  String _roomAdmin = "";
 
   String get roomName => _roomName;
   int get numberOfUsers => _numberOfUsers;
@@ -21,6 +23,18 @@ class RoomProvider extends ChangeNotifier {
   int get longBreakDuration => _longBreakDuration;
   bool get isTimerRunning => _isTimerRunning;
   String get roomError => _roomError;
+  bool get isDuoMode => _isDuoMode;
+  String get roomAdmin => _roomAdmin;
+
+  changeRoomAdmin(String admin) {
+    _roomAdmin = admin;
+    notifyListeners();
+  }
+
+  changeDuoMode(bool mode) {
+    _isDuoMode = !_isDuoMode;
+    notifyListeners();
+  }
 
   changeRoomName(String _name) {
     _roomName = _name;
@@ -50,7 +64,8 @@ class RoomProvider extends ChangeNotifier {
 // TODO: Update this function to match state function style
   Future<bool> createRoom() async {
     CollectionReference db = FirebaseFirestore.instance.collection("rooms");
-    var roomsWithSameName = await db.where("roomName", isEqualTo: roomName).get();
+    var roomsWithSameName =
+        await db.where("roomName", isEqualTo: roomName).get();
     if (roomsWithSameName.size > 0) {
       return false;
     } else {

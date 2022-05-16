@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Room {
   final String roomName;
+  final String adminID;
   int numberOfUsers;
   List<String> users;
   DateTime starstAt;
@@ -12,6 +13,7 @@ class Room {
 
   Room(
       {required this.roomName,
+      required this.adminID,
       required this.numberOfUsers,
       required this.users,
       required this.starstAt,
@@ -23,6 +25,7 @@ class Room {
   Map<String, dynamic> toMap() {
     return {
       'roomName': roomName,
+      'adminID': adminID,
       'numberOfUsres': numberOfUsers,
       'users': users,
       'starstAt': starstAt,
@@ -49,6 +52,7 @@ class Room {
 Future<Room> joinRoom(String _roomName) async {
   Room room = Room(
       roomName: '-1',
+      adminID: '',
       numberOfUsers: 0,
       users: [],
       starstAt: DateTime.now(),
@@ -72,6 +76,7 @@ Future<Room> joinRoom(String _roomName) async {
           print("here");
           room = Room(
               roomName: data.data()["roomName"].toString(),
+              adminID: data.data()['adminID'].toString(),
               numberOfUsers: data.data()["numberOfUsers"] ?? 0,
               users: data.data()["users"].cast<String>() ?? [],
               starstAt: data.data()["starstAt"].toDate(),

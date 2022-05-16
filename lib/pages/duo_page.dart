@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:pomoduo/providers/google_signin_provider.dart';
 import 'package:pomoduo/providers/room_provider.dart';
+import 'package:pomoduo/utils/showToast.dart';
 import 'package:provider/provider.dart';
 import 'package:pomoduo/models/room.dart';
 import 'package:pomoduo/providers/timer_provider.dart';
@@ -33,7 +34,7 @@ class _DuoPageState extends State<DuoPage> {
 
   _createRoom() async {
     if (!context.read<GoogleSignInProvider>().isSignedIn) {
-      _showToast(context, "Sign in to create room");
+      showToast(context, "Sign in to create room");
       return;
     }
     final roomName = await _createRoomDialog();
@@ -41,10 +42,14 @@ class _DuoPageState extends State<DuoPage> {
     if (roomName == null) {
       return;
     }
+    context
+        .read<RoomProvider>()
+        .changeRoomAdmin(context.read<GoogleSignInProvider>().user.id);
 
     DateTime date = DateTime.now().toLocal();
     Room room = Room(
         roomName: roomName.toString(),
+        adminID: context.read<GoogleSignInProvider>().user.id,
         numberOfUsers: 0,
         users: [],
         starstAt: date,
@@ -60,36 +65,15 @@ class _DuoPageState extends State<DuoPage> {
       context.read<TimerProvider>().updateFromFetch(room.focusDuration * 60,
           room.longBreakDuration * 60, room.shortBreakDuration * 60);
       context.read<RoomProvider>().changeRoomName(room.roomName);
+      context.read<RoomProvider>().changeDuoMode(true);
     } else {
-      _showToast(context, "Room already exists: $roomName");
+      showToast(context, "Room already exists: $roomName");
     }
-  }
-
-  void _showToast(BuildContext context, String toastText) {
-    final scaffold = ScaffoldMessenger.of(context);
-    scaffold.showSnackBar(
-      SnackBar(
-        duration: const Duration(seconds: 2),
-        backgroundColor: PomoduoColor.foregroundColor,
-        content: Text(
-          toastText,
-          style: const TextStyle(
-            color: PomoduoColor.textColor,
-            fontFamily: "Quicksand",
-          ),
-        ),
-        action: SnackBarAction(
-          label: 'GOT IT',
-          onPressed: scaffold.hideCurrentSnackBar,
-          textColor: PomoduoColor.themeColor,
-        ),
-      ),
-    );
   }
 
   _joinRoom() async {
     if (!context.read<GoogleSignInProvider>().isSignedIn) {
-      _showToast(context, "Sign in to join room");
+      showToast(context, "Sign in to join room");
       return;
     }
     final roomName = await _openRoomDialog();
@@ -106,9 +90,11 @@ class _DuoPageState extends State<DuoPage> {
       context.read<RoomProvider>().changeRoomName(room.roomName);
       addJoinHistory(roomName.toString(), DateTime.now().toString(),
           context.read<GoogleSignInProvider>().documentId.toString());
+      context.read<RoomProvider>().changeDuoMode(true);
+      context.read<RoomProvider>().changeRoomAdmin(room.adminID);
     } else {
       context.read<RoomProvider>().changeRoomName("-");
-      _showToast(context, "No room named: $roomName");
+      showToast(context, "No room named: $roomName");
     }
   }
 
