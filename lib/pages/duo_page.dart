@@ -83,7 +83,7 @@ class _DuoPageState extends State<DuoPage> {
       return;
     }
 
-    var room = await joinRoom(
+    var room = await context.read<RoomProvider>().joinRoom(
         roomName.toString(), context.read<GoogleSignInProvider>().user.id);
 
     if (room.roomName.toString() != '-1') {
