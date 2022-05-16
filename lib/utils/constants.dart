@@ -7,10 +7,10 @@ class PomoduoColor {
 
   static const Color focusColor = Color(0xFF664EFF);
   static const Color breakColor = Color(0xFF008B70);
+
+  static const Color textColor = Color(0xFFD6D6D6);
 }
 
 class PomoduoStyle {
-  static const TextStyle pageTitleStyle = TextStyle(
-    fontSize: 18,
-  );
+  static const TextStyle pageTitleStyle = TextStyle(fontSize: 18, fontWeight: FontWeight.bold);
 }

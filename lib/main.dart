@@ -42,9 +42,11 @@ class Pomoduo extends StatelessWidget {
         brightness: Brightness.dark,
         primarySwatch: Colors.deepPurple,
         visualDensity: VisualDensity.adaptivePlatformDensity,
-        textTheme: GoogleFonts.montserratTextTheme(
-          Theme.of(context).textTheme,
-        ).apply(bodyColor: Colors.white, displayColor: Colors.white),
+        textTheme: Theme.of(context).textTheme.apply(
+              bodyColor: PomoduoColor.textColor,
+              displayColor: PomoduoColor.textColor,
+              fontFamily: "Quicksand",
+            ),
       ),
       debugShowCheckedModeBanner: false,
       home: const MainPage(),

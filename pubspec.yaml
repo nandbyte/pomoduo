@@ -44,6 +44,9 @@ dev_dependencies:
 flutter:
     uses-material-design: true
     fonts:
-        - family: Quicksand-Variable
+        - family: Quicksand
           fonts:
-              - asset: fonts/Quicksand.ttf
+              - asset: fonts/Quicksand-Medium.ttf
+                weight: 400
+              - asset: fonts/Quicksand-Bold.ttf
+                weight: 700
