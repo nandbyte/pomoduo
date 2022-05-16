@@ -94,7 +94,6 @@ class TimerProvider with ChangeNotifier {
     }
 
     _remainingDuration = _currentSessionDuration;
-    notifyListeners();
   }
 
   _startTimer() {
