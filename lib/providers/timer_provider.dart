@@ -144,6 +144,8 @@ class TimerProvider with ChangeNotifier {
 
   _processSessionData() {
     _sessionCount = (_sessionCount + 1) % 8;
+
+    notifyListeners();
     // TODO: load from storage and save session count and focus count both incremented by 1
   }
 }
