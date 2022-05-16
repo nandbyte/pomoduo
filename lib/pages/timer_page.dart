@@ -83,9 +83,18 @@ class ArcTimer extends StatelessWidget {
             timerProvider.sessionCount % 2 == 0 ? PomoduoColor.focusColor : PomoduoColor.breakColor,
         arcType: ArcType.FULL,
         arcBackgroundColor: PomoduoColor.foregroundColor,
-        center: Text(
-          formatToTimerContent(timerProvider.remainingDuration.inSeconds),
-          style: const TextStyle(fontSize: 32),
+        center: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              formatToTimerContent(timerProvider.remainingDuration.inSeconds),
+              style: const TextStyle(fontSize: 32),
+            ),
+            Text(
+              timerProvider.sessionModeText,
+              style: const TextStyle(fontSize: 16),
+            ),
+          ],
         ),
       );
     });
