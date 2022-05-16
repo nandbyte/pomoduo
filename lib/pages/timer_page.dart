@@ -165,6 +165,7 @@ class ToggleTimerButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    context.read<RoomProvider>().init();
     return Consumer<TimerProvider>(builder: (context, timerProvider, widget) {
       return ElevatedButton(
         style: ElevatedButton.styleFrom(

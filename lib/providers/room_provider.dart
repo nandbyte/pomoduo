@@ -14,6 +14,7 @@ class RoomProvider extends ChangeNotifier {
   String _roomError = "";
   bool _isDuoMode = false;
   String _roomAdmin = "";
+  String _roomDocId = "";
 
   String get roomName => _roomName;
   int get numberOfUsers => _numberOfUsers;
@@ -63,18 +64,18 @@ class RoomProvider extends ChangeNotifier {
   }
 
 // TODO: Update this function to match state function style
-  Future<bool> createRoom() async {
-    CollectionReference db = FirebaseFirestore.instance.collection("rooms");
-    var roomsWithSameName =
-        await db.where("roomName", isEqualTo: roomName).get();
-    if (roomsWithSameName.size > 0) {
-      return false;
-    } else {
-      await db.add(toMap());
-    }
-    notifyListeners();
-    return true;
-  }
+  // Future<bool> createRoom() async {
+  //   CollectionReference db = FirebaseFirestore.instance.collection("rooms");
+  //   var roomsWithSameName =
+  //       await db.where("roomName", isEqualTo: roomName).get();
+  //   if (roomsWithSameName.size > 0) {
+  //     return false;
+  //   } else {
+  //     await db.add(toMap());
+  //   }
+  //   notifyListeners();
+  //   return true;
+  // }
 
   Future<void> leaveRoom(String roomName, String userID) async {
     var rooms = await FirebaseFirestore.instance
@@ -118,7 +119,7 @@ class RoomProvider extends ChangeNotifier {
       if (value.size > 0) {
         for (var snap in value.docs) {
           var data = snap;
-          docId = snap.id;
+          _roomDocId = snap.id;
           print(data.toString());
           if (_roomName == data.data()["roomName"].toString()) {
             print("here");
@@ -150,5 +151,74 @@ class RoomProvider extends ChangeNotifier {
   void showError(String error) {
     _roomError = error;
     notifyListeners();
+  }
+
+  Future<bool> updateRoomStatus(bool status) async {
+    CollectionReference db = FirebaseFirestore.instance.collection("rooms");
+    var roomObj = await db.where("roomName", isEqualTo: _roomName).get();
+    if (roomObj.size > 0) {
+      for (var room in roomObj.docs) {
+        var id = room.id;
+        await db.doc(id).update({"status": status}).then((_) {
+          print("Updated to $status");
+          return status;
+        });
+      }
+    }
+    return false;
+  }
+
+  Future<bool> getRoomStatus() async {
+    Room room = Room(
+        roomName: '-1',
+        adminID: '',
+        numberOfUsers: 0,
+        users: [],
+        starstAt: DateTime.now(),
+        status: false,
+        focusDuration: 0,
+        shortBreakDuration: 0,
+        longBreakDuration: 0);
+
+    var snapshot = await FirebaseFirestore.instance
+        .collection("rooms")
+        .where("roomName", isEqualTo: _roomName)
+        .get()
+        .then((value) {
+      if (value.size > 0) {
+        var docId;
+        int count = 0;
+        for (var snap in value.docs) {
+          var data = snap;
+          print(data.toString());
+          if (_roomName == data.data()["roomName"].toString()) {
+            print("here");
+            room = Room(
+                roomName: data.data()["roomName"].toString(),
+                adminID: data.data()['adminID'].toString(),
+                numberOfUsers: data.data()["numberOfUsers"] ?? 0,
+                users: data.data()["users"].cast<String>() ?? [],
+                starstAt: data.data()["starstAt"].toDate(),
+                status: data.data()["status"] ?? false,
+                focusDuration: data.data()["focusDuration"] ?? 0,
+                shortBreakDuration: data.data()["shortBreakDuration"] ?? 0,
+                longBreakDuration: data.data()["longBreakDuration"] ?? 0);
+            break;
+          }
+        }
+      }
+    });
+    return room.status;
+  }
+
+  void init() async {
+    FirebaseFirestore.instance
+        .collection('rooms')
+        .doc(_roomDocId)
+        .snapshots()
+        .listen((event) {
+      print(event.data());
+      notifyListeners();
+    });
   }
 }
