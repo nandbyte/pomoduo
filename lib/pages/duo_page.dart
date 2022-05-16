@@ -174,73 +174,77 @@ class _DuoPageState extends State<DuoPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: <Widget>[
-        const Center(
-          child: Text(
-            "Duo Mode",
-            style: PomoduoStyle.pageTitleStyle,
-          ),
-        ),
-        const SizedBox(
-          height: 36,
-        ),
-        const Center(
-          child: RoomDetails(),
-        ),
-        const SizedBox(
-          height: 36,
-        ),
-        (() {
-          if (context.read<RoomProvider>().roomName == "-") {
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                ElevatedButton(
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all<Color>(PomoduoColor.themeColor),
-                    foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
-                  ),
-                  onPressed: _createRoom,
-                  child: const Text(
-                    "Create Room",
-                    style: TextStyle(fontWeight: FontWeight.w700),
-                  ),
-                ),
-                ElevatedButton(
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all<Color>(PomoduoColor.themeColor),
-                    foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
-                  ),
-                  onPressed: _joinRoom,
-                  child: const Text(
-                    "Join Room",
-                    style: TextStyle(fontWeight: FontWeight.w700),
-                  ),
-                ),
-              ],
-            );
-          } else {
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                ElevatedButton(
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all<Color>(PomoduoColor.themeColor),
-                    foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
-                  ),
-                  onPressed: _leaveRoom,
-                  child: const Text(
-                    "Leave Room",
-                  ),
-                ),
-              ],
-            );
-          }
-        }())
-      ],
+    return Consumer<RoomProvider>(
+      builder: (context, roomProvider, widget) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            const Center(
+              child: Text(
+                "Duo Mode",
+                style: PomoduoStyle.pageTitleStyle,
+              ),
+            ),
+            const SizedBox(
+              height: 36,
+            ),
+            const Center(
+              child: RoomDetails(),
+            ),
+            const SizedBox(
+              height: 36,
+            ),
+            (() {
+              if (context.read<RoomProvider>().roomName == "-") {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    ElevatedButton(
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all<Color>(PomoduoColor.themeColor),
+                        foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+                      ),
+                      onPressed: _createRoom,
+                      child: const Text(
+                        "Create Room",
+                        style: TextStyle(fontWeight: FontWeight.w700),
+                      ),
+                    ),
+                    ElevatedButton(
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all<Color>(PomoduoColor.themeColor),
+                        foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+                      ),
+                      onPressed: _joinRoom,
+                      child: const Text(
+                        "Join Room",
+                        style: TextStyle(fontWeight: FontWeight.w700),
+                      ),
+                    ),
+                  ],
+                );
+              } else {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    ElevatedButton(
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all<Color>(PomoduoColor.themeColor),
+                        foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+                      ),
+                      onPressed: _leaveRoom,
+                      child: const Text(
+                        "Leave Room",
+                      ),
+                    ),
+                  ],
+                );
+              }
+            }())
+          ],
+        );
+      },
     );
   }
 }
