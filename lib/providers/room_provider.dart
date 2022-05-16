@@ -139,10 +139,7 @@ class RoomProvider extends ChangeNotifier {
       }
     });
     if (!room.users.contains(userID)) {
-      await FirebaseFirestore.instance
-          .collection("rooms")
-          .doc(_roomDocId)
-          .update({
+      await FirebaseFirestore.instance.collection("rooms").doc(_roomDocId).update({
         "users": FieldValue.arrayUnion([userID.toString()]),
         "numberOfUsers": FieldValue.increment(1),
       });
@@ -215,13 +212,13 @@ class RoomProvider extends ChangeNotifier {
   }
 
   void init() async {
-    FirebaseFirestore.instance
-        .collection('rooms')
-        .doc(_roomDocId)
-        .snapshots()
-        .listen((event) {
-      print(event.data());
-      notifyListeners();
-    });
+    //   FirebaseFirestore.instance
+    //       .collection('rooms')
+    //       .doc(_roomDocId)
+    //       .snapshots()
+    //       .listen((event) {
+    //     print(event.data());
+    //     notifyListeners();
+    //   });
   }
 }

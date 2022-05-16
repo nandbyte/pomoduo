@@ -1,7 +1,7 @@
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import 'package:pomoduo/pages/duo_page.dart';
 import 'package:pomoduo/pages/settings_page.dart';
@@ -14,6 +14,17 @@ import 'package:pomoduo/utils/constants.dart';
 import 'package:provider/provider.dart';
 
 Future<void> main() async {
+  AwesomeNotifications().initialize("resource://drawable/", [
+    NotificationChannel(
+      channelKey: "pomoduo_notification",
+      channelName: "Pomoduo",
+      channelDescription: "Timer Information",
+      defaultColor: PomoduoColor.foregroundColor,
+      importance: NotificationImportance.High,
+      channelShowBadge: true,
+    )
+  ]);
+
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
