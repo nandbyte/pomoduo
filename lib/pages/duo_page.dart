@@ -82,7 +82,8 @@ class _DuoPageState extends State<DuoPage> {
       return;
     }
 
-    var room = await joinRoom(roomName.toString());
+    var room = await joinRoom(
+        roomName.toString(), context.read<GoogleSignInProvider>().user.id);
 
     if (room.roomName.toString() != '-1') {
       context.read<TimerProvider>().updateFromFetch(room.focusDuration * 60,
@@ -100,6 +101,8 @@ class _DuoPageState extends State<DuoPage> {
 
   // TODO: complete this function
   _leaveRoom() async {
+    leaveRoom(context.read<RoomProvider>().roomName,
+        context.read<GoogleSignInProvider>().user.id);
     return;
   }
 
