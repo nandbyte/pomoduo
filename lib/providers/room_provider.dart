@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class RoomProvider extends ChangeNotifier {
   String _roomName = "-";
@@ -51,8 +50,7 @@ class RoomProvider extends ChangeNotifier {
 // TODO: Update this function to match state function style
   Future<bool> createRoom() async {
     CollectionReference db = FirebaseFirestore.instance.collection("rooms");
-    var roomsWithSameName =
-        await db.where("roomName", isEqualTo: roomName).get();
+    var roomsWithSameName = await db.where("roomName", isEqualTo: roomName).get();
     if (roomsWithSameName.size > 0) {
       return false;
     } else {
