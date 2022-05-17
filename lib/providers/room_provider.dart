@@ -106,7 +106,7 @@ class RoomProvider extends ChangeNotifier {
     Room room = Room(
         roomName: '-1',
         adminID: '',
-        numberOfUsers: 0,
+        numberOfUsers: 1,
         users: [],
         starstAt: DateTime.now(),
         status: false,
@@ -129,7 +129,7 @@ class RoomProvider extends ChangeNotifier {
             room = Room(
                 roomName: data.data()["roomName"].toString(),
                 adminID: data.data()['adminID'].toString(),
-                numberOfUsers: data.data()["numberOfUsers"] ?? 0,
+                numberOfUsers: data.data()["numberOfUsers"] ?? 1,
                 users: data.data()["users"].cast<String>() ?? [],
                 starstAt: data.data()["starstAt"].toDate(),
                 status: data.data()["status"] ?? false,
@@ -150,6 +150,7 @@ class RoomProvider extends ChangeNotifier {
         "numberOfUsers": FieldValue.increment(1),
       });
     }
+    _numberOfUsers = room.numberOfUsers + 1;
     notifyListeners();
     return room;
   }

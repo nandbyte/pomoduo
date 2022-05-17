@@ -234,7 +234,14 @@ class _AccountSettingsState extends State<AccountSettings> {
                           icon: const Icon(Icons.g_mobiledata),
                           onPressed: () {
                             googleSignInProvider.googleLogin();
-                            postLogin();
+                            print("Printing the user id");
+                            String uid = context
+                                .read<GoogleSignInProvider>()
+                                .user
+                                .id
+                                .toString();
+                            context.read<TimerProvider>().changeUserId(uid);
+                            print(context.read<TimerProvider>().userId);
                           },
                           label: const Text(
                             "Login with Google",
