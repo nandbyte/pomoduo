@@ -142,15 +142,12 @@ class RoomProvider extends ChangeNotifier {
       }
     });
     if (!room.users.contains(userID)) {
-      await FirebaseFirestore.instance
-          .collection("rooms")
-          .doc(_roomDocId)
-          .update({
+      await FirebaseFirestore.instance.collection("rooms").doc(_roomDocId).update({
         "users": FieldValue.arrayUnion([userID.toString()]),
         "numberOfUsers": FieldValue.increment(1),
       });
     }
-    _numberOfUsers = room.numberOfUsers + 1;
+    _numberOfUsers = room.numberOfUsers;
     notifyListeners();
     return room;
   }
