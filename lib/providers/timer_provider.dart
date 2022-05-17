@@ -226,9 +226,13 @@ class TimerProvider with ChangeNotifier {
         .snapshots()
         .listen((event) {
       print("Updating");
-
-      toogleUserTimer();
-      notifyListeners();
+      print(_roomName);
+      bool flag = event.data()?["status"];
+      print(flag);
+      if (!_isAdmin && flag != _isTimerRunning) {
+        toogleUserTimer();
+        notifyListeners();
+      }
     });
   }
 }

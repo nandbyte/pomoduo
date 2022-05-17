@@ -1,8 +1,8 @@
-import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:pomoduo/pages/duo_page.dart';
 import 'package:pomoduo/pages/settings_page.dart';
 import 'package:pomoduo/pages/timer_page.dart';
@@ -99,7 +99,7 @@ class _MainPageState extends State<MainPage> {
       body: SafeArea(
         child: Center(
           child: Container(
-              margin: const EdgeInsets.fromLTRB(16.0, 36.0, 16.0, 36.0),
+              margin: const EdgeInsets.fromLTRB(16.0, 0, 16.0, 0),
               child: _tabList.elementAt(_selectedIndex)),
         ),
       ),
