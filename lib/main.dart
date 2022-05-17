@@ -1,8 +1,8 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
 
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:pomoduo/pages/duo_page.dart';
 import 'package:pomoduo/pages/settings_page.dart';
 import 'package:pomoduo/pages/timer_page.dart';
@@ -14,6 +14,17 @@ import 'package:pomoduo/utils/constants.dart';
 import 'package:provider/provider.dart';
 
 Future<void> main() async {
+  AwesomeNotifications().initialize("resource://drawable/", [
+    NotificationChannel(
+      channelKey: "pomoduo_notification",
+      channelName: "Pomoduo",
+      channelDescription: "Timer Information",
+      defaultColor: PomoduoColor.foregroundColor,
+      importance: NotificationImportance.High,
+      channelShowBadge: true,
+    )
+  ]);
+
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
@@ -37,14 +48,20 @@ class Pomoduo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    context.read<TimerProvider>().init();
     return MaterialApp(
       theme: ThemeData(
-        brightness: Brightness.dark,
-        primarySwatch: Colors.deepPurple,
         visualDensity: VisualDensity.adaptivePlatformDensity,
-        textTheme: GoogleFonts.montserratTextTheme(
-          Theme.of(context).textTheme,
-        ).apply(bodyColor: Colors.white, displayColor: Colors.white),
+        colorScheme: ColorScheme.fromSwatch(
+          brightness: Brightness.dark,
+          primarySwatch: Colors.deepPurple,
+          accentColor: Colors.transparent,
+        ),
+        textTheme: Theme.of(context).textTheme.apply(
+              bodyColor: PomoduoColor.textColor,
+              displayColor: PomoduoColor.textColor,
+              fontFamily: "Quicksand",
+            ),
       ),
       debugShowCheckedModeBanner: false,
       home: const MainPage(),
@@ -81,8 +98,8 @@ class _MainPageState extends State<MainPage> {
       backgroundColor: PomoduoColor.backgroundColor,
       body: SafeArea(
         child: Center(
-          child: Padding(
-              padding: const EdgeInsets.fromLTRB(8.0, 16.0, 8.0, 8.0),
+          child: Container(
+              margin: const EdgeInsets.fromLTRB(16.0, 0, 16.0, 0),
               child: _tabList.elementAt(_selectedIndex)),
         ),
       ),

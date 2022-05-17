@@ -1,5 +1,8 @@
+import 'package:pomoduo/models/room.dart';
+import 'package:pomoduo/providers/google_signin_provider.dart';
 import 'package:pomoduo/providers/room_provider.dart';
 import 'package:pomoduo/providers/timer_provider.dart';
+import 'package:pomoduo/utils/showToast.dart';
 
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
@@ -25,33 +28,32 @@ class _TimerPageState extends State<TimerPage> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          const Text(
-            "Pomodoro",
-            style: PomoduoStyle.pageTitleStyle,
-          ),
-          const SizedBox(height: 108),
-          const Center(
-            child: ArcTimer(),
-          ),
-          const SizedBox(height: 24),
-          const Center(
-            child: SessionProgressIndicator(),
-          ),
-          const SizedBox(height: 108),
-          Column(
-            children: const [
-              ToggleTimerButton(),
-              SizedBox(
-                height: 64,
-              )
-            ],
-          ),
-        ],
-      ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: <Widget>[
+        const Text(
+          "Pomodoro",
+          style: PomoduoStyle.pageTitleStyle,
+        ),
+        const SizedBox(height: 108),
+        const Center(
+          child: ArcTimer(),
+        ),
+        const SizedBox(height: 24),
+        const Center(
+          child: SessionProgressIndicator(),
+        ),
+        const SizedBox(height: 48),
+        Column(
+          children: const [
+            ToggleTimerButton(),
+            SizedBox(
+              height: 24,
+            )
+          ],
+        ),
+      ],
     );
   }
 }
@@ -77,16 +79,28 @@ class ArcTimer extends StatelessWidget {
       return CircularPercentIndicator(
         radius: 110,
         lineWidth: 15,
-        percent: timerProvider.remainingDuration.inSeconds /
-            timerProvider.currentSessionDuration.inSeconds,
+        percent: timerProvider.isTimerRunning
+            ? timerProvider.remainingDuration.inSeconds /
+                timerProvider.currentSessionDuration.inSeconds
+            : 1,
         circularStrokeCap: CircularStrokeCap.round,
-        progressColor:
-            timerProvider.sessionCount % 2 == 0 ? PomoduoColor.focusColor : PomoduoColor.breakColor,
+        progressColor: timerProvider.sessionCount % 2 == 0
+            ? PomoduoColor.focusColor
+            : PomoduoColor.breakColor,
         arcType: ArcType.FULL,
         arcBackgroundColor: PomoduoColor.foregroundColor,
-        center: Text(
-          formatToTimerContent(timerProvider.remainingDuration.inSeconds),
-          style: const TextStyle(fontSize: 32),
+        center: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              formatToTimerContent(timerProvider.remainingDuration.inSeconds),
+              style: const TextStyle(fontSize: 32),
+            ),
+            Text(
+              timerProvider.sessionModeText,
+              style: const TextStyle(fontSize: 16),
+            ),
+          ],
         ),
       );
     });
@@ -153,6 +167,7 @@ class ToggleTimerButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    context.read<TimerProvider>().init();
     return Consumer<TimerProvider>(builder: (context, timerProvider, widget) {
       return ElevatedButton(
         style: ElevatedButton.styleFrom(
@@ -172,8 +187,24 @@ class ToggleTimerButton extends StatelessWidget {
             return const Icon(Icons.stop, color: Colors.white);
           }
         })()),
-        onPressed: () =>
-            context.read<TimerProvider>().toggleTimer(context.read<RoomProvider>().roomName),
+        onPressed: () async {
+          if (!context.read<RoomProvider>().isDuoMode) {
+            context.read<TimerProvider>().toogleUserTimer();
+          } else {
+            await getRoomStatus(context.read<RoomProvider>().roomName)
+                .then((roomStatus) {
+              if (context.read<GoogleSignInProvider>().user.id.toString() ==
+                  context.read<RoomProvider>().roomAdmin) {
+                print("Admin clicked");
+                context
+                    .read<TimerProvider>()
+                    .toggleTimer(context.read<RoomProvider>().roomName, true);
+              } else {
+                showToast(context, "Only Admin can stat/stop timer");
+              }
+            });
+          }
+        },
       );
     });
   }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pomoduo/models/user.dart';
 import 'package:pomoduo/providers/google_signin_provider.dart';
+import 'package:pomoduo/providers/room_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:pomoduo/providers/timer_provider.dart';
 import 'package:pomoduo/utils/constants.dart';
@@ -44,31 +45,38 @@ class FocusTimeSettings extends StatefulWidget {
 class _FocusTimeSettingsState extends State<FocusTimeSettings> {
   @override
   Widget build(BuildContext context) {
-    return Column(children: <Widget>[
-      const Padding(
-        padding: EdgeInsets.fromLTRB(0, 36, 0, 16.0),
-        child: Text("Focus Time"),
-      ),
-      CustomRadioButton(
-        elevation: 0,
-        absoluteZeroSpacing: false,
-        selectedColor: PomoduoColor.themeColor,
-        unSelectedColor: PomoduoColor.foregroundColor,
-        buttonTextStyle: const ButtonTextStyle(
-          selectedColor: Colors.white,
-          unSelectedColor: Colors.white,
+    return SingleChildScrollView(
+      child: Column(children: <Widget>[
+        const Padding(
+          padding: EdgeInsets.fromLTRB(0, 36, 0, 16.0),
+          child: Text(
+            "Focus Time",
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
         ),
-        enableShape: true,
-        enableButtonWrap: true,
-        buttonLables: const ["20 m", "25 m", "30 m", "35 m", "40 m", "45 m"],
-        buttonValues: const [20, 25, 30, 35, 40, 45],
-        defaultSelected: context.watch<TimerProvider>().focusDuration / 60,
-        radioButtonValue: (value) {
-          context.read<TimerProvider>().changeFocusDuration(int.parse(value.toString()) * 60);
-          print(value);
-        },
-      ),
-    ]);
+        CustomRadioButton(
+          elevation: 0,
+          absoluteZeroSpacing: false,
+          selectedColor: PomoduoColor.themeColor,
+          unSelectedColor: PomoduoColor.foregroundColor,
+          buttonTextStyle: const ButtonTextStyle(
+            selectedColor: Colors.white,
+            unSelectedColor: Colors.white,
+          ),
+          enableShape: true,
+          enableButtonWrap: true,
+          buttonLables: const ["20 m", "25 m", "30 m", "35 m", "40 m", "45 m"],
+          buttonValues: const [20, 25, 30, 35, 40, 45],
+          defaultSelected: context.watch<TimerProvider>().focusDuration / 60,
+          radioButtonValue: (value) {
+            context
+                .read<TimerProvider>()
+                .changeFocusDuration(int.parse(value.toString()) * 60);
+            print(value);
+          },
+        ),
+      ]),
+    );
   }
 }
 
@@ -89,7 +97,10 @@ class _ShortBreakTimeSettingsState extends State<ShortBreakTimeSettings> {
     return Column(children: <Widget>[
       const Padding(
         padding: EdgeInsets.fromLTRB(0, 36, 0, 16.0),
-        child: Text("Short Break Time"),
+        child: Text(
+          "Short Break Time",
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
       ),
       CustomRadioButton(
         elevation: 0,
@@ -106,7 +117,9 @@ class _ShortBreakTimeSettingsState extends State<ShortBreakTimeSettings> {
         buttonValues: const [5, 10, 15],
         defaultSelected: context.watch<TimerProvider>().shortBreakDuration / 60,
         radioButtonValue: (value) {
-          context.read<TimerProvider>().changeShortBreakDuration(int.parse(value.toString()) * 60);
+          context
+              .read<TimerProvider>()
+              .changeShortBreakDuration(int.parse(value.toString()) * 60);
           print(value);
         },
       ),
@@ -127,7 +140,10 @@ class _LongBreakTimeSettingsState extends State<LongBreakTimeSettings> {
     return Column(children: <Widget>[
       const Padding(
         padding: EdgeInsets.fromLTRB(0, 36, 0, 16.0),
-        child: Text("Long Break Time"),
+        child: Text(
+          "Long Break Time",
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
       ),
       CustomRadioButton(
         elevation: 0,
@@ -144,7 +160,9 @@ class _LongBreakTimeSettingsState extends State<LongBreakTimeSettings> {
         buttonValues: const [15, 20, 25],
         defaultSelected: context.watch<TimerProvider>().longBreakDuration / 60,
         radioButtonValue: (value) {
-          context.read<TimerProvider>().changeLongBreakDuration(int.parse(value.toString()) * 60);
+          context
+              .read<TimerProvider>()
+              .changeLongBreakDuration(int.parse(value.toString()) * 60);
           print(value);
         },
       ),
@@ -163,7 +181,8 @@ class _AccountSettingsState extends State<AccountSettings> {
   Future<void> postLogin() async {
     PomoduoUser user = PomoduoUser(
         UID: context.read<GoogleSignInProvider>().user.id.toString(),
-        userName: context.read<GoogleSignInProvider>().user.displayName.toString(),
+        userName:
+            context.read<GoogleSignInProvider>().user.displayName.toString(),
         docID: "",
         currentRoom: "",
         allDateOfJoin: [],
@@ -186,7 +205,10 @@ class _AccountSettingsState extends State<AccountSettings> {
           const Center(
             child: Padding(
               padding: EdgeInsets.fromLTRB(0, 36, 0, 16.0),
-              child: Text("Account"),
+              child: Text(
+                "Account",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
             ),
           ),
           Consumer<GoogleSignInProvider>(
@@ -197,23 +219,33 @@ class _AccountSettingsState extends State<AccountSettings> {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       const Center(
-                        child: Text("Not logged in.", style: TextStyle(color: Colors.white70)),
+                        child: Text("Not logged in.",
+                            style: TextStyle(color: Colors.white70)),
                       ),
                       Padding(
                         padding: const EdgeInsets.fromLTRB(0, 12, 0, 16.0),
                         child: ElevatedButton.icon(
                           style: ButtonStyle(
-                            backgroundColor:
-                                MaterialStateProperty.all<Color>(PomoduoColor.themeColor),
-                            foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+                            backgroundColor: MaterialStateProperty.all<Color>(
+                                PomoduoColor.themeColor),
+                            foregroundColor:
+                                MaterialStateProperty.all<Color>(Colors.white),
                           ),
                           icon: const Icon(Icons.g_mobiledata),
                           onPressed: () {
                             googleSignInProvider.googleLogin();
-                            postLogin();
+                            print("Printing the user id");
+                            String uid = context
+                                .read<GoogleSignInProvider>()
+                                .user
+                                .id
+                                .toString();
+                            context.read<TimerProvider>().changeUserId(uid);
+                            print(context.read<TimerProvider>().userId);
                           },
                           label: const Text(
                             "Login with Google",
+                            style: TextStyle(fontWeight: FontWeight.w700),
                           ),
                         ),
                       ),
@@ -225,35 +257,51 @@ class _AccountSettingsState extends State<AccountSettings> {
                     children: [
                       CircleAvatar(
                         backgroundColor: PomoduoColor.foregroundColor,
-                        backgroundImage: NetworkImage(
-                            context.read<GoogleSignInProvider>().user.photoUrl ??
-                                "https://avatars.githubusercontent.com/u/38876495?v=4"),
+                        backgroundImage: NetworkImage(context
+                                .read<GoogleSignInProvider>()
+                                .user
+                                .photoUrl ??
+                            "https://avatars.githubusercontent.com/u/38876495?v=4"),
                       ),
                       const SizedBox(height: 12),
                       Center(
                         child: Text(
-                            context.read<GoogleSignInProvider>().user.displayName.toString(),
-                            style: TextStyle(color: Colors.white)),
+                            context
+                                .read<GoogleSignInProvider>()
+                                .user
+                                .displayName
+                                .toString(),
+                            style: const TextStyle(color: Colors.white)),
                       ),
                       const SizedBox(height: 8),
                       Center(
-                        child: Text(context.read<GoogleSignInProvider>().user.email.toString(),
-                            style: TextStyle(color: Colors.white70)),
+                        child: Text(
+                            context
+                                .read<GoogleSignInProvider>()
+                                .user
+                                .email
+                                .toString(),
+                            style: const TextStyle(color: Colors.white70)),
                       ),
                       Padding(
                         padding: const EdgeInsets.fromLTRB(0, 12, 0, 16.0),
                         child: ElevatedButton.icon(
                           style: ButtonStyle(
-                            backgroundColor:
-                                MaterialStateProperty.all<Color>(PomoduoColor.themeColor),
-                            foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+                            backgroundColor: MaterialStateProperty.all<Color>(
+                                PomoduoColor.themeColor),
+                            foregroundColor:
+                                MaterialStateProperty.all<Color>(Colors.white),
                           ),
                           icon: const Icon(Icons.logout),
                           onPressed: () {
+                            context.read<RoomProvider>().leaveRoom(
+                                context.read<RoomProvider>().roomName,
+                                context.read<GoogleSignInProvider>().user.id);
                             googleSignInProvider.googleLogout();
                           },
                           label: const Text(
                             "Logout ",
+                            style: TextStyle(fontWeight: FontWeight.w700),
                           ),
                         ),
                       ),

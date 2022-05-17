@@ -1,7 +1,9 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:pomoduo/models/room.dart';
 
 class TimerProvider with ChangeNotifier {
@@ -16,12 +18,13 @@ class TimerProvider with ChangeNotifier {
   bool _isTimerRunning = false;
   Duration _currentSessionDuration = Duration.zero;
   Duration _remainingDuration = Duration.zero;
-
+  bool _isAdmin = false;
+  String _roomName = "-";
+  String _roomDocId = "";
   // Session data
-  int sessionCount = 0;
-
-  // TODO: Session status text handling
-  String sessionMode = "Focus";
+  int _sessionCount = 0;
+  String _sessionModeText = "Focus";
+  String _userId = "";
 
   final List<Session> sessions = [
     Session.focus,
@@ -40,12 +43,27 @@ class TimerProvider with ChangeNotifier {
   bool get isTimerRunning => _isTimerRunning;
   Duration get remainingDuration => _remainingDuration;
   Duration get currentSessionDuration => _currentSessionDuration;
+  int get sessionCount => _sessionCount;
+  String get sessionModeText => _sessionModeText;
+  String get roomDocId => _roomDocId;
+  String get userId => _userId;
 
   TimerProvider() {
     _watch = Stopwatch();
 
     // TODO: load data from SharedPreferences
-    sessionCount = 0;
+    _sessionCount = 0;
+  }
+
+  changeUserId(String id) {
+    print("Req for update uid");
+    print("Prev uid = $_userId, current uid =  $id");
+    _userId = id;
+  }
+
+  changeSessionCount(int x) {
+    _sessionCount = x;
+    notifyListeners();
   }
 
   changeFocusDuration(int newDuration) {
@@ -71,23 +89,50 @@ class TimerProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  toggleTimer(String roomName) {
+  changeRoomDocId(String id) {
+    _roomDocId = id;
+    notifyListeners();
+  }
+
+  toggleTimer(String roomName, bool isAdmin) {
     if (!_isTimerRunning) {
+      _roomName = roomName;
       updateRoomStatus(true, roomName);
+      _isAdmin = isAdmin;
       _startTimer();
+      _isTimerRunning = true;
     } else {
       updateRoomStatus(false, roomName);
       _stopTimer();
+      _isTimerRunning = false;
     }
   }
 
+  toogleUserTimer() {
+    if (!_isTimerRunning) {
+      _startTimer();
+      _isTimerRunning = true;
+    } else {
+      _stopTimer();
+      _isTimerRunning = false;
+    }
+  }
+
+  startNonAdminTimer() {
+    _startTimer();
+    _isTimerRunning = true;
+  }
+
   prepareNewTimer() {
-    if (sessions[sessionCount] == Session.focus) {
+    if (sessions[_sessionCount] == Session.focus) {
       _currentSessionDuration = _focusDuration;
-    } else if (sessions[sessionCount] == Session.shortBreak) {
+      _sessionModeText = "Focus";
+    } else if (sessions[_sessionCount] == Session.shortBreak) {
       _currentSessionDuration = _shortBreakDuration;
+      _sessionModeText = "Short Break";
     } else {
       _currentSessionDuration = _longBreakDuration;
+      _sessionModeText = "Long Break";
     }
 
     _remainingDuration = _currentSessionDuration;
@@ -105,7 +150,8 @@ class TimerProvider with ChangeNotifier {
     if (_isTimerRunning) {
       _remainingDuration = _currentSessionDuration - _watch.elapsed;
       notifyListeners();
-      if (_remainingDuration == Duration.zero) {
+      print(_remainingDuration.inSeconds);
+      if (_remainingDuration.inSeconds == 0) {
         _processSessionData();
         _stopTimer();
       }
@@ -116,15 +162,83 @@ class TimerProvider with ChangeNotifier {
     _countdownTimer.cancel();
     _watch.stop();
     _isTimerRunning = false;
-
+    if (_isAdmin) {
+      updateRoomStatus(false, _roomName);
+    }
     prepareNewTimer();
 
     notifyListeners();
   }
 
-  _processSessionData() {
-    sessionCount = (sessionCount + 1) % 8;
+  _processSessionData() async {
+    if (_sessionCount % 2 == 0) {
+      // await FirebaseFirestore.instance.collection("stats").add({
+      //   "totalFocusDuration":
+      //       FieldValue.increment(currentSessionDuration.inMinutes),
+      //   "totalSession": FieldValue.increment(1),
+      //   "sessionDate": DateFormat.yMMMMd('en_US').format(DateTime.now()),
+      //   "userId": _userId,
+      // });
+      var snaps = await FirebaseFirestore.instance
+          .collection("stats")
+          .where("userId", isEqualTo: _userId)
+          .get();
+      if (snaps.size == 0) {
+        await FirebaseFirestore.instance.collection("stats").add({
+          "totalFocusDuration":
+              FieldValue.increment(currentSessionDuration.inMinutes),
+          "totalSession": FieldValue.increment(1),
+          "userId": _userId,
+          "sessions": FieldValue.arrayUnion([
+            {
+              "date": DateFormat.yMMMMd('en_US').format(DateTime.now()),
+              "session": currentSessionDuration.inMinutes,
+            }
+          ]),
+        });
+      } else {
+        for (var snap in snaps.docs) {
+          print("Rerq for update");
+          String docId = snap.id;
+          print("Requested DocID $docId and uid $_userId");
+          await FirebaseFirestore.instance
+              .collection("stats")
+              .doc(docId)
+              .update({
+            "sessions": FieldValue.arrayUnion([
+              {
+                "date": DateFormat.yMMMMd('en_US').format(DateTime.now()),
+                "session": currentSessionDuration.inMinutes,
+              }
+            ]),
+            "lastModifyReq": DateTime.now().toString(),
+          });
+          break;
+        }
+      }
+    }
+    _sessionCount = (_sessionCount + 1) % 8;
+    notifyListeners();
     // TODO: load from storage and save session count and focus count both incremented by 1
+  }
+
+  Future<void> init() async {
+    print("Remote req $_roomDocId");
+    // if (_roomName != '-') {
+    FirebaseFirestore.instance
+        .collection('rooms')
+        .doc(_roomDocId)
+        .snapshots()
+        .listen((event) {
+      print("Updating");
+      print(_roomName);
+      bool flag = event.data()?["status"];
+      print(flag);
+      if (!_isAdmin && flag != _isTimerRunning) {
+        toogleUserTimer();
+        notifyListeners();
+      }
+    });
   }
 }
 

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter/services.dart';
 import 'package:pomoduo/providers/google_signin_provider.dart';
 import 'package:pomoduo/providers/room_provider.dart';
+import 'package:pomoduo/utils/showToast.dart';
 import 'package:provider/provider.dart';
 import 'package:pomoduo/models/room.dart';
 import 'package:pomoduo/providers/timer_provider.dart';
@@ -32,78 +33,75 @@ class _DuoPageState extends State<DuoPage> {
   }
 
   _createRoom() async {
+    if (!context.read<GoogleSignInProvider>().isSignedIn) {
+      showToast(context, "Sign in to create room");
+      return;
+    }
     final roomName = await _createRoomDialog();
 
     if (roomName == null) {
       return;
     }
+    context.read<RoomProvider>().changeRoomAdmin(context.read<GoogleSignInProvider>().user.id);
 
     DateTime date = DateTime.now().toLocal();
     Room room = Room(
         roomName: roomName.toString(),
+        adminID: context.read<GoogleSignInProvider>().user.id,
         numberOfUsers: 0,
         users: [],
         starstAt: date,
         status: false,
         focusDuration: context.read<TimerProvider>().focusDuration ~/ 60,
-        shortBreakDuration:
-            context.read<TimerProvider>().shortBreakDuration ~/ 60,
-        longBreakDuration:
-            context.read<TimerProvider>().longBreakDuration ~/ 60);
-
-    bool result = await room.createRoom();
+        shortBreakDuration: context.read<TimerProvider>().shortBreakDuration ~/ 60,
+        longBreakDuration: context.read<TimerProvider>().longBreakDuration ~/ 60);
+    bool result = await room.createRoom(context.read<GoogleSignInProvider>().user.id);
     if (result) {
-      context.read<TimerProvider>().updateFromFetch(room.focusDuration * 60,
-          room.longBreakDuration * 60, room.shortBreakDuration * 60);
+      context.read<TimerProvider>().updateFromFetch(
+          room.focusDuration * 60, room.longBreakDuration * 60, room.shortBreakDuration * 60);
       context.read<RoomProvider>().changeRoomName(room.roomName);
+      context.read<RoomProvider>().changeDuoMode(true);
     } else {
-      _showToast(context, "Room already exists: $roomName");
+      showToast(context, "Room already exists: $roomName");
     }
   }
 
-  void _showToast(BuildContext context, String toastText) {
-    final scaffold = ScaffoldMessenger.of(context);
-    scaffold.showSnackBar(
-      SnackBar(
-        backgroundColor: PomoduoColor.foregroundColor,
-        content: Text(
-          toastText,
-          style: GoogleFonts.montserrat(
-            textStyle: const TextStyle(color: Colors.white),
-          ),
-        ),
-        action: SnackBarAction(
-          label: 'GOT IT',
-          onPressed: scaffold.hideCurrentSnackBar,
-          textColor: PomoduoColor.themeColor,
-        ),
-      ),
-    );
-  }
-
   _joinRoom() async {
+    if (!context.read<GoogleSignInProvider>().isSignedIn) {
+      showToast(context, "Sign in to join room");
+      return;
+    }
     final roomName = await _openRoomDialog();
 
     if (roomName == null) {
       return;
     }
 
-    var room = await joinRoom(roomName.toString());
+    var room = await context
+        .read<RoomProvider>()
+        .joinRoom(roomName.toString(), context.read<GoogleSignInProvider>().user.id);
+
+    context
+        .read<RoomProvider>()
+        .joinRoom(roomName.toString(), context.read<GoogleSignInProvider>().user.id);
 
     if (room.roomName.toString() != '-1') {
-      context.read<TimerProvider>().updateFromFetch(room.focusDuration * 60,
-          room.longBreakDuration * 60, room.shortBreakDuration * 60);
+      context.read<TimerProvider>().updateFromFetch(
+          room.focusDuration * 60, room.longBreakDuration * 60, room.shortBreakDuration * 60);
       context.read<RoomProvider>().changeRoomName(room.roomName);
-      addJoinHistory(roomName.toString(), DateTime.now().toString(),
-          context.read<GoogleSignInProvider>().documentId.toString());
+      context.read<RoomProvider>().changeDuoMode(true);
+      context.read<RoomProvider>().changeRoomAdmin(room.adminID);
+      context.read<TimerProvider>().changeRoomDocId(context.read<RoomProvider>().roomDocId);
+      context.read<TimerProvider>().changeSessionCount(0);
     } else {
       context.read<RoomProvider>().changeRoomName("-");
-      _showToast(context, "No room named: $roomName");
+      showToast(context, "No room named: $roomName");
     }
   }
 
-  // TODO: complete this function
   _leaveRoom() async {
+    context.read<RoomProvider>().leaveRoom(
+        context.read<RoomProvider>().roomName, context.read<GoogleSignInProvider>().user.id);
     return;
   }
 
@@ -130,8 +128,7 @@ class _DuoPageState extends State<DuoPage> {
           actions: [
             ElevatedButton(
               style: ButtonStyle(
-                backgroundColor:
-                    MaterialStateProperty.all<Color>(PomoduoColor.themeColor),
+                backgroundColor: MaterialStateProperty.all<Color>(PomoduoColor.themeColor),
                 foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
               ),
               onPressed: _enterRoomId,
@@ -160,10 +157,8 @@ class _DuoPageState extends State<DuoPage> {
           actions: [
             ElevatedButton(
               style: ButtonStyle(
-                backgroundColor:
-                    MaterialStateProperty.all<Color>(PomoduoColor.themeColor),
-                foregroundColor:
-                    MaterialStateProperty.all<Color>(Colors.white60),
+                backgroundColor: MaterialStateProperty.all<Color>(PomoduoColor.themeColor),
+                foregroundColor: MaterialStateProperty.all<Color>(Colors.white60),
               ),
               onPressed: _enterRoomId,
               child: const Text(
@@ -191,69 +186,69 @@ class _DuoPageState extends State<DuoPage> {
           height: 36,
         ),
         const Center(
-          child: RoomName(),
+          child: RoomDetails(),
         ),
         const SizedBox(
-          height: 16,
+          height: 36,
         ),
-        (() {
-          if (context.read<RoomProvider>().roomName == "-") {
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                ElevatedButton(
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all<Color>(
-                        PomoduoColor.themeColor),
-                    foregroundColor:
-                        MaterialStateProperty.all<Color>(Colors.white),
-                  ),
-                  onPressed: _createRoom,
-                  child: const Text(
-                    "Create Room",
-                  ),
-                ),
-                ElevatedButton(
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all<Color>(
-                        PomoduoColor.themeColor),
-                    foregroundColor:
-                        MaterialStateProperty.all<Color>(Colors.white),
-                  ),
-                  onPressed: _joinRoom,
-                  child: const Text(
-                    "Join Room",
-                  ),
-                ),
-              ],
-            );
-          } else {
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                ElevatedButton(
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all<Color>(
-                        PomoduoColor.themeColor),
-                    foregroundColor:
-                        MaterialStateProperty.all<Color>(Colors.white),
-                  ),
-                  onPressed: _leaveRoom,
-                  child: const Text(
-                    "Leave Room",
-                  ),
-                ),
-              ],
-            );
-          }
-        }())
+        Consumer<RoomProvider>(builder: (context, roomProvider, widget) {
+          return Container(
+            child: (() {
+              if (roomProvider.roomName == "-") {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    ElevatedButton(
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all<Color>(PomoduoColor.themeColor),
+                        foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+                      ),
+                      onPressed: _createRoom,
+                      child: const Text(
+                        "Create Room",
+                        style: TextStyle(fontWeight: FontWeight.w700),
+                      ),
+                    ),
+                    ElevatedButton(
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all<Color>(PomoduoColor.themeColor),
+                        foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+                      ),
+                      onPressed: _joinRoom,
+                      child: const Text(
+                        "Join Room",
+                        style: TextStyle(fontWeight: FontWeight.w700),
+                      ),
+                    ),
+                  ],
+                );
+              } else {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    ElevatedButton(
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all<Color>(PomoduoColor.themeColor),
+                        foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+                      ),
+                      onPressed: _leaveRoom,
+                      child: const Text(
+                        "Leave Room",
+                      ),
+                    ),
+                  ],
+                );
+              }
+            }()),
+          );
+        })
       ],
     );
   }
 }
 
-class RoomName extends StatelessWidget {
-  const RoomName({Key? key}) : super(key: key);
+class RoomDetails extends StatelessWidget {
+  const RoomDetails({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -261,7 +256,61 @@ class RoomName extends StatelessWidget {
       return Column(
         children: [
           const Text(
-            "Room",
+            "Room Name",
+          ),
+          const SizedBox(height: 16),
+          GestureDetector(
+            onTap: () {
+              Clipboard.setData(
+                ClipboardData(
+                  text: roomProvider.roomName.toString(),
+                ),
+              );
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  duration: const Duration(seconds: 2),
+                  backgroundColor: PomoduoColor.foregroundColor,
+                  content: Text(
+                    "Room name copied: ${roomProvider.roomName}",
+                    style: const TextStyle(
+                      color: PomoduoColor.textColor,
+                      fontFamily: "Quicksand",
+                    ),
+                  ),
+                  action: SnackBarAction(
+                    label: "GOT IT",
+                    onPressed: ScaffoldMessenger.of(context).hideCurrentSnackBar,
+                    textColor: PomoduoColor.themeColor,
+                  ),
+                ),
+              );
+            },
+            child: Container(
+              padding: const EdgeInsets.all(24.0),
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: PomoduoColor.foregroundColor,
+                border: Border.all(
+                  color: PomoduoColor.foregroundColor,
+                ),
+                borderRadius: const BorderRadius.all(
+                  Radius.circular(20),
+                ),
+              ),
+              child: Center(
+                child: Text(
+                  roomProvider.roomName,
+                  style: const TextStyle(
+                    color: Colors.white70,
+                    fontSize: 24,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 48),
+          const Text(
+            "Room Members",
           ),
           const SizedBox(height: 16),
           Container(
@@ -278,7 +327,7 @@ class RoomName extends StatelessWidget {
             ),
             child: Center(
               child: Text(
-                roomProvider.roomName,
+                roomProvider.numberOfUsers.toString(),
                 style: const TextStyle(
                   color: Colors.white70,
                   fontSize: 24,
