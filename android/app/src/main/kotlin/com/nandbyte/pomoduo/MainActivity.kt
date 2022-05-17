@@ -1,4 +1,4 @@
-package com.example.pomoduo
+package com.nandbyte.pomoduo
 
 import io.flutter.embedding.android.FlutterActivity
 

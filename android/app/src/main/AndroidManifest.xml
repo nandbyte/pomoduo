@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.pomoduo">
+    package="com.nandbyte.pomoduo">
    <application
-        android:label="pomoduo"
+        android:label="Pomoduo"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

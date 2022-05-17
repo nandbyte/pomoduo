@@ -1,26 +1,64 @@
 name: pomoduo
-description: A new Flutter project.
+description: Shared pomodoro timer for teams
+
 
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
+
 version: 1.0.0+1
+
 
 environment:
     sdk: ">=2.16.2 <3.0.0"
 
+
 dependencies:
     flutter:
         sdk: flutter
+
     cupertino_icons: ^1.0.2
+    google_fonts: ^2.3.2
+    font_awesome: ^5.10.1
+
+    custom_radio_grouped_button: ^2.1.2
+    percent_indicator: ^4.0.1
+    step_progress_indicator: ^1.0.2
+    awesome_notifications: ^0.6.21
+    audioplayers: any
+
+    firebase_core: ^1.6.0
+    cloud_firestore: ^2.5.1
+    firebase_auth: ^3.3.18
+    google_sign_in: ^5.3.1
+
+    intl: ^0.17.0
+    http: ^0.13.4
+
+    provider: ^6.0.2
+
 
 dev_dependencies:
     flutter_test:
         sdk: flutter
     flutter_lints: ^1.0.0
+    icons_launcher: ^1.1.8
+
+
+flutter_icons:
+  image_path: assets/icons/pomoduo_icon.png
+  android: true
+
 
 flutter:
     uses-material-design: true
+    assets:
+        - assets/audio/event_sound.mp3
+        - assets/audio/timer_end_sound.mp3
+        - assets/audio/timer_start_sound.mp3
     fonts:
-        - family: Quicksand-Variable
+        - family: Quicksand
           fonts:
-              - asset: fonts/Quicksand.ttf
+              - asset: assets/fonts/Quicksand-Medium.ttf
+                weight: 400
+              - asset: assets/fonts/Quicksand-Bold.ttf
+                weight: 700
