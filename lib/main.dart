@@ -97,8 +97,8 @@ class _MainPageState extends State<MainPage> {
       backgroundColor: PomoduoColor.backgroundColor,
       body: SafeArea(
         child: Center(
-          child: Padding(
-              padding: const EdgeInsets.fromLTRB(8.0, 16.0, 8.0, 8.0),
+          child: Container(
+              margin: const EdgeInsets.fromLTRB(16.0, 36.0, 16.0, 36.0),
               child: _tabList.elementAt(_selectedIndex)),
         ),
       ),
