@@ -8,25 +8,52 @@ class StatisticsPage extends StatefulWidget {
   State<StatisticsPage> createState() => _StatisticsPageState();
 }
 
+class SingleStatisticData {
+  String date;
+  int session;
+
+  SingleStatisticData({required this.date, required this.session});
+}
+
 class _StatisticsPageState extends State<StatisticsPage> {
+  int totalSession = 2;
+  int totalDuration = 1065;
+
+  List<SingleStatisticData> sessions = [
+    SingleStatisticData(date: "March 24, 2022", session: 20),
+    SingleStatisticData(date: "March 25, 2022", session: 25),
+    SingleStatisticData(date: "March 27, 2022", session: 25),
+    SingleStatisticData(date: "March 30, 2022", session: 25),
+  ];
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: const <Widget>[
-          Center(
+        children: <Widget>[
+          const Center(
             child: Text(
               "Statistics",
               style: PomoduoStyle.pageTitleStyle,
             ),
           ),
-          TotalStatistics(),
-          SingleStatistics(),
-          SingleStatistics(),
-          SingleStatistics(),
-          SingleStatistics(),
+          TotalStatistics(
+            totalSession: totalSession,
+            totalDuration: totalDuration,
+          ),
+          Column(
+            children: (() {
+              List<Widget> returnList = [];
+
+              for (int i = sessions.length - 1; i >= 0; i--) {
+                returnList.add(SingleStatistics(data: sessions[i], serial: i));
+              }
+
+              return returnList;
+            }()),
+          )
         ],
       ),
     );
@@ -34,7 +61,11 @@ class _StatisticsPageState extends State<StatisticsPage> {
 }
 
 class TotalStatistics extends StatelessWidget {
-  const TotalStatistics({Key? key}) : super(key: key);
+  final int totalSession;
+  final int totalDuration;
+
+  const TotalStatistics({Key? key, required this.totalSession, required this.totalDuration})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -83,11 +114,11 @@ class TotalStatistics extends StatelessWidget {
                 ),
                 Expanded(
                   child: Column(
-                    children: const [
-                      Text("Total Duration"),
+                    children: [
+                      const Text("Total Duration"),
                       Text(
-                        "34",
-                        style: TextStyle(fontSize: 36),
+                        "$totalDuration m",
+                        style: const TextStyle(fontSize: 36),
                       ),
                     ],
                   ),
@@ -102,7 +133,10 @@ class TotalStatistics extends StatelessWidget {
 }
 
 class SingleStatistics extends StatelessWidget {
-  const SingleStatistics({Key? key}) : super(key: key);
+  final SingleStatisticData data;
+  final int serial;
+
+  const SingleStatistics({Key? key, required this.data, required this.serial}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -110,9 +144,9 @@ class SingleStatistics extends StatelessWidget {
       margin: const EdgeInsets.fromLTRB(0, 12, 0, 12),
       child: Column(
         children: [
-          const Text(
-            "March 23, 2022",
-            style: TextStyle(fontWeight: FontWeight.bold),
+          Text(
+            data.date,
+            style: const TextStyle(fontWeight: FontWeight.bold),
           ),
           const SizedBox(
             height: 12,
@@ -134,11 +168,11 @@ class SingleStatistics extends StatelessWidget {
                 children: [
                   Expanded(
                     child: Column(
-                      children: const [
-                        Text("Sessions"),
+                      children: [
+                        const Text("Session Serial"),
                         Text(
-                          "2",
-                          style: TextStyle(fontSize: 36),
+                          serial.toString(),
+                          style: const TextStyle(fontSize: 36),
                         )
                       ],
                     ),
@@ -151,11 +185,11 @@ class SingleStatistics extends StatelessWidget {
                   ),
                   Expanded(
                     child: Column(
-                      children: const [
-                        Text("Duration"),
+                      children: [
+                        const Text("Duration"),
                         Text(
-                          "4",
-                          style: TextStyle(fontSize: 36),
+                          "${data.session} m",
+                          style: const TextStyle(fontSize: 36),
                         ),
                       ],
                     ),
