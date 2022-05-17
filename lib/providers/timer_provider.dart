@@ -61,6 +61,11 @@ class TimerProvider with ChangeNotifier {
     _userId = id;
   }
 
+  changeSessionCount(int x) {
+    _sessionCount = x;
+    notifyListeners();
+  }
+
   changeFocusDuration(int newDuration) {
     _focusDuration = Duration(seconds: newDuration);
     notifyListeners();

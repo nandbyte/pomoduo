@@ -97,6 +97,7 @@ class _DuoPageState extends State<DuoPage> {
       context
           .read<TimerProvider>()
           .changeRoomDocId(context.read<RoomProvider>().roomDocId);
+      context.read<TimerProvider>().changeSessionCount(0);
     } else {
       context.read<RoomProvider>().changeRoomName("-");
       showToast(context, "No room named: $roomName");
