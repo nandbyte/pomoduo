@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:pomoduo/models/room.dart';
@@ -16,7 +17,9 @@ class TimerProvider with ChangeNotifier {
   bool _isTimerRunning = false;
   Duration _currentSessionDuration = Duration.zero;
   Duration _remainingDuration = Duration.zero;
-
+  bool _isAdmin = false;
+  String _roomName = "-";
+  String _roomDocId = "";
   // Session data
   int _sessionCount = 0;
   String _sessionModeText = "Focus";
@@ -40,6 +43,7 @@ class TimerProvider with ChangeNotifier {
   Duration get currentSessionDuration => _currentSessionDuration;
   int get sessionCount => _sessionCount;
   String get sessionModeText => _sessionModeText;
+  String get roomDocId => _roomDocId;
 
   TimerProvider() {
     _watch = Stopwatch();
@@ -71,9 +75,16 @@ class TimerProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  toggleTimer(String roomName) {
+  changeRoomDocId(String id) {
+    _roomDocId = id;
+    notifyListeners();
+  }
+
+  toggleTimer(String roomName, bool isAdmin) {
     if (!_isTimerRunning) {
+      _roomName = roomName;
       updateRoomStatus(true, roomName);
+      _isAdmin = isAdmin;
       _startTimer();
       _isTimerRunning = true;
     } else {
@@ -125,7 +136,8 @@ class TimerProvider with ChangeNotifier {
     if (_isTimerRunning) {
       _remainingDuration = _currentSessionDuration - _watch.elapsed;
       notifyListeners();
-      if (_remainingDuration == Duration.zero) {
+      print(_remainingDuration.inSeconds);
+      if (_remainingDuration.inSeconds == 0) {
         _processSessionData();
         _stopTimer();
       }
@@ -136,7 +148,9 @@ class TimerProvider with ChangeNotifier {
     _countdownTimer.cancel();
     _watch.stop();
     _isTimerRunning = false;
-
+    if (_isAdmin) {
+      updateRoomStatus(false, _roomName);
+    }
     prepareNewTimer();
 
     notifyListeners();
@@ -147,6 +161,21 @@ class TimerProvider with ChangeNotifier {
 
     notifyListeners();
     // TODO: load from storage and save session count and focus count both incremented by 1
+  }
+
+  Future<void> init() async {
+    print("Remote req $_roomDocId");
+    // if (_roomName != '-') {
+    FirebaseFirestore.instance
+        .collection('rooms')
+        .doc(_roomDocId)
+        .snapshots()
+        .listen((event) {
+      print("Updating");
+
+      toogleUserTimer();
+      notifyListeners();
+    });
   }
 }
 

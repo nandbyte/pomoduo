@@ -48,6 +48,7 @@ class Pomoduo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    context.read<TimerProvider>().init();
     return MaterialApp(
       theme: ThemeData(
         visualDensity: VisualDensity.adaptivePlatformDensity,

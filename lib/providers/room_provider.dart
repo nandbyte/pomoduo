@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:pomoduo/models/room.dart';
@@ -27,6 +29,7 @@ class RoomProvider extends ChangeNotifier {
   String get roomError => _roomError;
   bool get isDuoMode => _isDuoMode;
   String get roomAdmin => _roomAdmin;
+  String get roomDocId => _roomDocId;
 
   changeRoomAdmin(String admin) {
     _roomAdmin = admin;
@@ -139,7 +142,10 @@ class RoomProvider extends ChangeNotifier {
       }
     });
     if (!room.users.contains(userID)) {
-      await FirebaseFirestore.instance.collection("rooms").doc(_roomDocId).update({
+      await FirebaseFirestore.instance
+          .collection("rooms")
+          .doc(_roomDocId)
+          .update({
         "users": FieldValue.arrayUnion([userID.toString()]),
         "numberOfUsers": FieldValue.increment(1),
       });
@@ -209,16 +215,5 @@ class RoomProvider extends ChangeNotifier {
       }
     });
     return room.status;
-  }
-
-  void init() async {
-    //   FirebaseFirestore.instance
-    //       .collection('rooms')
-    //       .doc(_roomDocId)
-    //       .snapshots()
-    //       .listen((event) {
-    //     print(event.data());
-    //     notifyListeners();
-    //   });
   }
 }

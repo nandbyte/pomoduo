@@ -84,8 +84,9 @@ class ArcTimer extends StatelessWidget {
                 timerProvider.currentSessionDuration.inSeconds
             : 1,
         circularStrokeCap: CircularStrokeCap.round,
-        progressColor:
-            timerProvider.sessionCount % 2 == 0 ? PomoduoColor.focusColor : PomoduoColor.breakColor,
+        progressColor: timerProvider.sessionCount % 2 == 0
+            ? PomoduoColor.focusColor
+            : PomoduoColor.breakColor,
         arcType: ArcType.FULL,
         arcBackgroundColor: PomoduoColor.foregroundColor,
         center: Column(
@@ -166,7 +167,7 @@ class ToggleTimerButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    context.read<RoomProvider>().init();
+    context.read<TimerProvider>().init();
     return Consumer<TimerProvider>(builder: (context, timerProvider, widget) {
       return ElevatedButton(
         style: ElevatedButton.styleFrom(
@@ -190,11 +191,14 @@ class ToggleTimerButton extends StatelessWidget {
           if (!context.read<RoomProvider>().isDuoMode) {
             context.read<TimerProvider>().toogleUserTimer();
           } else {
-            await getRoomStatus(context.read<RoomProvider>().roomName).then((roomStatus) {
+            await getRoomStatus(context.read<RoomProvider>().roomName)
+                .then((roomStatus) {
               if (context.read<GoogleSignInProvider>().user.id.toString() ==
                   context.read<RoomProvider>().roomAdmin) {
                 print("Admin clicked");
-                context.read<TimerProvider>().toggleTimer(context.read<RoomProvider>().roomName);
+                context
+                    .read<TimerProvider>()
+                    .toggleTimer(context.read<RoomProvider>().roomName, true);
               } else {
                 showToast(context, "Only Admin can stat/stop timer");
               }

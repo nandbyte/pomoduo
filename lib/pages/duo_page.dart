@@ -59,7 +59,6 @@ class _DuoPageState extends State<DuoPage> {
             context.read<TimerProvider>().shortBreakDuration ~/ 60,
         longBreakDuration:
             context.read<TimerProvider>().longBreakDuration ~/ 60);
-
     bool result =
         await room.createRoom(context.read<GoogleSignInProvider>().user.id);
     if (result) {
@@ -95,6 +94,9 @@ class _DuoPageState extends State<DuoPage> {
       context.read<RoomProvider>().changeRoomName(room.roomName);
       context.read<RoomProvider>().changeDuoMode(true);
       context.read<RoomProvider>().changeRoomAdmin(room.adminID);
+      context
+          .read<TimerProvider>()
+          .changeRoomDocId(context.read<RoomProvider>().roomDocId);
     } else {
       context.read<RoomProvider>().changeRoomName("-");
       showToast(context, "No room named: $roomName");
